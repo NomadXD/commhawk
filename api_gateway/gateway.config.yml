@@ -1,0 +1,23 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  api:
+    host: '*'
+    paths: '/test'
+serviceEndpoints:
+  apiService:
+    url: 'http://uds:3000'
+policies:
+  - log
+  - proxy
+pipelines:
+  api:
+    apiEndpoints:
+      - api
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: apiService

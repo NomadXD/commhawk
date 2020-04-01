@@ -1,0 +1,43 @@
+version: '3'
+services:
+  postgres:
+    container_name: user_database
+    image: postgres
+    environment:
+      POSTGRES_DB: user_data
+      POSTGRES_USER: sl_alerts
+      POSTGRES_PASSWORD: password
+    volumes:
+        - postgres:/data/postgres
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+
+  user_data_service:
+    build: './user_data_service'
+    container_name: uds
+    ports: 
+      - "3002:3000"
+    depends_on: 
+      - postgres
+    environment:
+      DATABASE_URL: postgres://sl_alerts:password@postgres:5432/user_data
+    volumes: 
+      - ./user_data_service:/src
+      - container_node_modules:/src/node_modules
+
+  api_gateway:
+    image: express-gateway:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user_data_service
+    volumes: 
+      - ./api_gateway/gateway.config.yml:/var/lib/eg/gateway.config.yml 
+    
+
+volumes:
+  postgres:
+  container_node_modules:
+
+ 
