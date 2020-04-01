@@ -6,7 +6,7 @@ admin:
 apiEndpoints:
   api:
     host: '*'
-    paths: '/test'
+    paths: '/api/user/create'
 serviceEndpoints:
   apiService:
     url: 'http://uds:3000'

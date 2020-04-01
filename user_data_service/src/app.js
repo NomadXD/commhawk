@@ -1,10 +1,7 @@
 const express = require('express')
 const app = express()
-const test = require('./service.controller')
+const userRouter = require('./service.routes')
 
-
-app.get('/test',async (req,res) => {
-  await test()
-})
+app.use('/api/user',userRouter);
 
 module.exports = app;

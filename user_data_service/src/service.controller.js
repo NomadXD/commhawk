@@ -1,10 +1,12 @@
 const pool = require('./service.config')
 
-const test = async () => {
+const createUserController = async (req,res) => {
 
-    let result = await pool.query("INSERT INTO test values ('2','Lahiru','lahiru@gmail.com');")
-    console.log(result)
+    res.json({
+        "success":200
+    })
+
 
 }
 
-module.exports = test;
+module.exports = {createUserController};
