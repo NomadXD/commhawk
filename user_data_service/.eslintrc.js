@@ -6,6 +6,8 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'plugin:import/errors',
+    'plugin:import/warnings'
   ],
   globals: {
     Atomics: 'readonly',
@@ -13,7 +15,12 @@ module.exports = {
   },
   parserOptions: {
     ecmaVersion: 2018,
+    sourceType: 'module',
   },
   rules: {
+    "semi": ["error", "always"],
+    "quotes": ["error", "double"],
+    "linebreak-style" : 0
   },
+  "extends": "eslint:recommended"
 };
