@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS UserDetail cascade;
 DROP TABLE IF EXISTS UserCredential cascade;
 DROP DOMAIN IF EXISTS UUID4 cascade;
+DROP PROCEDURE IF EXISTS createUser cascade;
 
 
 /*
@@ -46,3 +47,31 @@ CREATE TABLE UserCredential (
     primary key(user_id),
     foreign key (user_id) references UserDetail(user_id)
 );
+
+
+
+/*
+                               _                     
+                              | |                    
+  _ __  _ __ ___   ___ ___  __| |_   _ _ __ ___  ___ 
+ | '_ \| '__/ _ \ / __/ _ \/ _` | | | | '__/ _ \/ __|
+ | |_) | | | (_) | (_|  __/ (_| | |_| | | |  __/\__ \
+ | .__/|_|  \___/ \___\___|\__,_|\__,_|_|  \___||___/
+ | |                                                 
+ |_|                                                 
+*/
+
+
+CREATE OR REPLACE PROCEDURE createUser(UUID4, VARCHAR(15), VARCHAR(63), VARCHAR(63),
+										DATE, VARCHAR(127), VARCHAR(127), VARCHAR(63),
+									   VARCHAR(127), VARCHAR(31),CHAR(60))
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+BEGIN
+  INSERT INTO UserDetail values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10); 
+  INSERT INTO UserCredential values ($1, $11);
+END;
+$$;
+
+
