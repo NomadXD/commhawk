@@ -1,9 +1,53 @@
 const pool = require('./service.config')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const uuid = require('uuid/v4')
+const userModel = require('./service.model')
 
 const signUpUserController = async (req,res) => {
 
-    const token = jwt.sign({"user":{"name":"Lahiru","id":1234}},"secret")
+    // TODO Backend validation
+    const {
+        body: {
+            nic, firstName,lastName, dob,
+            addressLine1, addressLine2, city, email, telephoneNumber, password
+        },
+    } = req;
+
+    const hashedPassword = bcrypt.hashSync(password,10)
+
+    try{
+        const id = uuid()
+        const success = await userModel.createUser(id,nic,firstName,lastName,dob,addressLine1,addressLine2,city,email,telephoneNumber,hashedPassword)
+        
+        if(success){
+
+            const token = jwt.sign({"id":id},"secret")
+
+            res.json({
+                "message":"Success",
+                "token": token
+            })
+        }
+    }catch(err){
+        res.json({
+            "message":"Error",
+            "error":err
+        })
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+    
 
    res.json({
        "success":200,
