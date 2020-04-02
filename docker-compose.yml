@@ -24,7 +24,7 @@ services:
       DATABASE_URL: postgres://sl_alerts:password@postgres:5432/user_data
     volumes: 
       - ./user_data_service:/src
-      - container_node_modules:/src/node_modules
+      # - container_node_modules:/src/node_modules
 
   api_gateway:
     image: express-gateway:latest
@@ -38,6 +38,6 @@ services:
 
 volumes:
   postgres:
-  container_node_modules:
+  # container_node_modules:
 
  
