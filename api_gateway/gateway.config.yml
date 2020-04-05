@@ -17,9 +17,16 @@ apiEndpoints:
       - '/api/user/delete'
       - '/api/user/:userId'
     methods: ["GET","POST","PUT","DELETE"]
+  socket:
+    host: '*'
+    paths:
+      - '/api/socket/broadcast'
+      - '/api/socket/test' 
 serviceEndpoints:
   noAuthService:
     url: 'http://uds:3000'
+  socketService:
+    url: 'htpp://socket:3000'
 policies:
   - log
   - proxy
@@ -52,3 +59,11 @@ pipelines:
         - action:
             serviceEndpoint: noAuthService
 
+  socket:
+    apiEndpoints:
+      - socket
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: socketService
+      
