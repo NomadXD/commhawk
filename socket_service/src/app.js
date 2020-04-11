@@ -7,22 +7,23 @@ var io = require('socket.io')(http,{
     cookie: false
   });
 
+
+const socket = require('./service.socket')
+
 const bodyParser = require("body-parser");
 const socketRouter = require("./service.routes")
-
+const broadcastChannel = socket.getBroadcastChannel(io);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const broadcastChannel = require('./service.socket')(io)
-
-
 app.use(function(req,res,next){
-  req.socket = broadcastChannel;
+  req.broadcastChannel = broadcastChannel 
   next();
 });
 
 app.use('/api/socket',socketRouter)
 
+socket.initiatePeriodicBroadcast(io)
 
 module.exports = http;

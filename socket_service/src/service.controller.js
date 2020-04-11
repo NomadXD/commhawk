@@ -1,6 +1,7 @@
+
 const dispatchBroadcast = async (req,res) => {
 
-    req.socket.emit('emergency',{data:{lat:req.body.lat,lng:req.body.lng,message:req.body.message}})
+    req.broadcastChannel.emit('emergency',{data:{lat:'lat',lng:'lng',message:'msg'}})
     res.json({
         "success":200
     })
