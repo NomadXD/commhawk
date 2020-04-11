@@ -1,6 +1,6 @@
-var app = require('express')();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http,{
+var app = require("express")();
+var http = require("http").createServer(app);
+var io = require("socket.io")(http,{
     // below are engine.IO options
     pingInterval: 10000,
     pingTimeout: 5000,
@@ -8,22 +8,22 @@ var io = require('socket.io')(http,{
   });
 
 
-const socket = require('./service.socket')
+const socket = require("./service.socket");
 
 const bodyParser = require("body-parser");
-const socketRouter = require("./service.routes")
+const socketRouter = require("./service.routes");
 const broadcastChannel = socket.getBroadcastChannel(io);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(function(req,res,next){
-  req.broadcastChannel = broadcastChannel 
+  req.broadcastChannel = broadcastChannel;
   next();
 });
 
-app.use('/api/socket',socketRouter)
+app.use("/api/socket",socketRouter);
 
-socket.initiatePeriodicBroadcast(io)
+socket.initiatePeriodicBroadcast(io);
 
 module.exports = http;

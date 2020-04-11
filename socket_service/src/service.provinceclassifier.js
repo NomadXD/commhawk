@@ -3,31 +3,31 @@ const h3 = require("h3-js");
 
 const getCurrentProvince = async (lat,lng) => {
     const RESOLUTION = 5;
-    const geoHash = h3.geoToH3(lat,lng,RESOLUTION)
-    console.log(geoHash)
+    const geoHash = h3.geoToH3(lat,lng,RESOLUTION);
+    console.log(geoHash);
     let province;
     if(provinceHashEnum.WP[geoHash]){
-        province = 'WP'
+        province = "WP";
     }else if (provinceHashEnum.NW[geoHash]){
-        province = 'NW'
+        province = "NW";
     }else if (provinceHashEnum.NC[geoHash]){
-        province = 'NC'
+        province = "NC";
     }else if(provinceHashEnum.NP[geoHash]){
-        province = 'NP'
+        province = "NP";
     }else if (provinceHashEnum.SP[geoHash]){
-        province = 'SP'
+        province = "SP";
     }else if (provinceHashEnum.SB[geoHash]){
-        province = 'SB'
+        province = "SB";
     }else if (provinceHashEnum.EP[geoHash]){
-        province = 'EP'
+        province = "EP";
     }else if (provinceHashEnum.UP[geoHash]){
-        province = 'UP'
+        province = "UP";
     }
 
     return province;
 
 
-}
+};
 
 module.exports = getCurrentProvince;
 
