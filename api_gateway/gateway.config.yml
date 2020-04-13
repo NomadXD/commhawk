@@ -17,6 +17,10 @@ apiEndpoints:
       - '/api/user/delete'
       - '/api/user/:userId'
     methods: ["GET","POST","PUT","DELETE"]
+  gov:
+    host: '*'
+    paths:
+      - '/api/gov/test'
   socket:
     host: '*'
     paths:
@@ -27,6 +31,8 @@ serviceEndpoints:
     url: 'http://uds:3000'
   socketService:
     url: 'htpp://socket:3000'
+  govAuthService:
+    url: 'http://gov_auth:3000'
 policies:
   - log
   - proxy
@@ -66,4 +72,12 @@ pipelines:
       - proxy:
         - action:
             serviceEndpoint: socketService
+  
+  gov_auth:
+    apiEndpoints:
+      - gov
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: govAuthService
       
