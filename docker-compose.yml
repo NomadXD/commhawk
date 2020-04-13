@@ -1,11 +1,11 @@
 version: '3'
 services:
   postgres:
-    container_name: user_database
-    image: postgres
+    container_name: postgres
+    image: mdillon/postgis
     environment:
       POSTGRES_MULTIPLE_DATABASES: user_data,gov_auth
-      POSTGRES_USER: sl_alerts
+      POSTGRES_USER: commhawk
       POSTGRES_PASSWORD: password
     volumes:
         - postgres:/data/postgres
@@ -32,7 +32,7 @@ services:
     depends_on: 
       - postgres
     environment:
-      DATABASE_URL: postgres://sl_alerts:password@postgres:5432/gov_auth
+      DATABASE_URL: postgres://commhawk:password@postgres:5432/user_data
     volumes: 
       - ./user_data_service:/src
       # - container_node_modules:/src/node_modules
@@ -45,7 +45,7 @@ services:
     depends_on: 
       - postgres
     environment:
-      DATABASE_URL: postgres://sl_alerts:password@postgres:5432/user_data
+      DATABASE_URL: postgres://commhawk:password@postgres:5432/gov_auth
     volumes:
       - ./gov_authority_service:/src 
 
