@@ -4,14 +4,25 @@ services:
     container_name: user_database
     image: postgres
     environment:
-      POSTGRES_DB: user_data
+      POSTGRES_MULTIPLE_DATABASES: user_data,gov_auth
       POSTGRES_USER: sl_alerts
       POSTGRES_PASSWORD: password
     volumes:
         - postgres:/data/postgres
+        - ./database:/docker-entrypoint-initdb.d
     ports:
       - "5433:5432"
     restart: unless-stopped
+
+  rethinkdb:
+    container_name: rethinkdb
+    image: rethinkdb:latest
+    ports:
+      - "3004:8080"
+      - "29015:29015"
+      - "28015:28015"
+    volumes: 
+      - rethinkdb:/data
 
   user_data_service:
     build: './user_data_service'
@@ -21,10 +32,22 @@ services:
     depends_on: 
       - postgres
     environment:
-      DATABASE_URL: postgres://sl_alerts:password@postgres:5432/user_data
+      DATABASE_URL: postgres://sl_alerts:password@postgres:5432/gov_auth
     volumes: 
       - ./user_data_service:/src
       # - container_node_modules:/src/node_modules
+  
+  gov_authority_service:
+    build: './gov_authority_service'
+    container_name: gov_auth
+    ports:
+      - "3001:3000"
+    depends_on: 
+      - postgres
+    environment:
+      DATABASE_URL: postgres://sl_alerts:password@postgres:5432/user_data
+    volumes:
+      - ./gov_authority_service:/src 
 
 
 
@@ -50,6 +73,7 @@ services:
 
 volumes:
   postgres:
+  rethinkdb:
   # container_node_modules:
 
  
