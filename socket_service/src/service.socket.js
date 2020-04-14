@@ -14,7 +14,6 @@ const getBroadcastChannel = (io) => {
   );
 
   broadcastChannel.on("connection", function (socket) {
-      console.log(socket.decoded);
       rethinkDB.saveSocketID(socket.id,socket.decoded["id"]);
       socket.emit("connected", { hello: "world" });
       socket.on("my other event", function (data) {
@@ -27,6 +26,10 @@ const getBroadcastChannel = (io) => {
         let arrUnion = Ref.update({
         users: admin.firestore.FieldValue.arrayUnion("bk3RNwTe3H0dgfgggk_HHwgIpoDKCIZvvDMExUdFQ3P1")
       });
+      });
+
+      socket.on("disconnect",function(){
+        rethinkDB.removeSocket(socket.id);
       });
       
     });

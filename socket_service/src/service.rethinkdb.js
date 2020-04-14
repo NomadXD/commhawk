@@ -33,7 +33,13 @@ const saveSocketID = async (socketId,instituteId) => {
     });
 };
 
+const removeSocket = async (socketId) => {
+    r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
+        r.db("commhawk").table("map_ids").filter({"socketId":socketId}).delete().run(conn);
+    });
+};
 
 
-module.exports = {initiateRealTimeDB,saveSocketID};
+
+module.exports = {initiateRealTimeDB,saveSocketID,removeSocket};
 
