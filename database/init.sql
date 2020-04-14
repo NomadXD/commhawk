@@ -207,3 +207,18 @@ INSERT INTO Province values ('Nothern Province','NP');
 INSERT INTO Province values ('Uwa Province','UP');
 INSERT INTO Province values ('Sabaragamuwa Province','SG');
 
+
+CREATE OR REPLACE PROCEDURE createGovInstitute(UUID4, INT, VARCHAR(127), VARCHAR(127),
+										VARCHAR(31), VARCHAR(31), VARCHAR(7), GEOGRAPHY(POINT,4326),
+                                        VARCHAR(64), VARCHAR(15), VARCHAR(15),CHAR(60))
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+BEGIN
+  INSERT INTO Governemnt_Institute values ($1, $2); 
+  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
+  INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
+  INSERT INTO Institute_credentials values ($1, $12);
+END;
+$$;
+
