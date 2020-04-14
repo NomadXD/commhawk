@@ -20,7 +20,7 @@ apiEndpoints:
   gov:
     host: '*'
     paths:
-      - '/api/gov/test'
+      - '/api/gov/signup'
   socket:
     host: '*'
     paths:
@@ -38,6 +38,7 @@ policies:
   - proxy
   - jwt
   - request-transformer
+  - terminate
 pipelines:
   noAuth:
     apiEndpoints:
@@ -54,7 +55,12 @@ pipelines:
       - jwt:
         - action:
             secretOrPublicKey: 'secret'
-            checkCredentialExistence: false      
+            checkCredentialExistence: false
+            passThrough: true
+      - terminate:
+        - action:
+            statusCode : 404
+            message : "Bad"     
       
       - request-transformer:
         - action:
