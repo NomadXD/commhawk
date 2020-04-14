@@ -22,8 +22,18 @@ const initiateRealTimeDB = async () => {
         });
     });
        
-
 };
 
-module.exports = {initiateRealTimeDB};
+const saveSocketID = async (socketId,instituteId) => {
+    r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
+        r.db("commhawk").table("map_ids").insert({
+            "instituteId": instituteId,
+            "socketId": socketId
+        }).run(conn);
+    });
+};
+
+
+
+module.exports = {initiateRealTimeDB,saveSocketID};
 
