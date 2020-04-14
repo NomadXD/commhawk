@@ -8,6 +8,13 @@ var io = require("socket.io")(http,{
   });
 
 
+
+io.use(
+  // eslint-disable-next-line no-undef
+  require("./service.middleware").socketJWTAuthentication(socket,next)
+);
+
+
 const socket = require("./service.socket");
 const rethinkDB = require("./service.rethinkdb");
 
