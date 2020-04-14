@@ -56,6 +56,8 @@ services:
     container_name: socket
     ports: 
       - "3003:3000"
+    depends_on: 
+      - rethinkdb
     volumes: 
       - ./socket_service:/src
 
