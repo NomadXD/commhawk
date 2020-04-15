@@ -8,13 +8,6 @@ var io = require("socket.io")(http,{
   });
 
 
-
-io.use(function(socket,next){
-  require("./service.middleware").socketJWTAuthentication(socket,next);
-}
-);
-
-
 const socketConnection = require("./service.socket");
 const rethinkDB = require("./service.rethinkdb");
 
@@ -34,6 +27,6 @@ app.use(function(req,res,next){
 
 app.use("/api/socket",socketRouter);
 
-socketConnection.initiatePeriodicBroadcast(io);
+//socketConnection.initiatePeriodicBroadcast(io);
 
 module.exports = http;
