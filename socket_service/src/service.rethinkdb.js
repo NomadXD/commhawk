@@ -39,7 +39,38 @@ const removeSocket = async (socketId) => {
     });
 };
 
+const createIncidentDoc = async (instituteId,broadCastChannel) => {
+    r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
+        r.db("commhawk").tableCreate(instituteId).run(conn,function(err,res){
+            if (err) throw err;
+            return r.db("commhawk").table(instituteId).changes().run(conn,function(err,cursor){
+                cursor.each(function(err, row) {
+                    if (err) throw err;
+                    dispatchIncident(instituteId,broadCastChannel,row);
+                });
+            });
+        });
+    
+    });    
+};
 
 
-module.exports = {initiateRealTimeDB,saveSocketID,removeSocket};
+const dispatchIncident = async (instituteId,broadCastChannel,incident) => {
+    r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
+    r.db("commhawk").table("map_ids").filter(r.row("instituteId").eq(instituteId)).
+    run(conn, function(err, cursor) {
+        if (err) throw err;
+        cursor.toArray(function(err, result) {
+            if (err) throw err;
+            let institute = result[0];
+            console.log(result[0].socketId);
+            broadCastChannel.to(result[0].socketId).emit("Incident",incident);
+        });
+    });
+    });
+};
+
+
+
+module.exports = {initiateRealTimeDB,saveSocketID,removeSocket,createIncidentDoc,dispatchIncident};
 
