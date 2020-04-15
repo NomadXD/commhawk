@@ -8,4 +8,16 @@ const createGovInsititute = async (params) => {
 
 }
 
-module.exports = {createGovInsititute}
+const getInstituteInfo = async (params) => {
+    const queryString = ` SELECT government_institute.institute_id, government_institute.institute_type, government_institute.institute_status,
+                            institute_credentials.password from government_institute, institute_location, institute_credentials where 
+                            (government_institute.institute_id = institute_location.institute_id) and 
+                            (government_institute.institute_id = institute_credentials.institute_id) and
+                            (institute_location.institute_type = $1) and (institute_location.city = $2) 
+                        `
+    const values = [params[0],params[1]]
+    let result =  await pool.query(queryString,values)
+    return result.rows[0]
+}
+
+module.exports = {createGovInsititute,getInstituteInfo}
