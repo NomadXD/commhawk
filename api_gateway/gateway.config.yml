@@ -21,6 +21,7 @@ apiEndpoints:
     host: '*'
     paths:
       - '/api/gov/signup'
+      - '/api/gov/signin'
   socket:
     host: '*'
     paths:
