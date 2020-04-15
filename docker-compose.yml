@@ -26,8 +26,6 @@ services:
       - ./user_data_service:/src
       # - container_node_modules:/src/node_modules
 
-
-
   socket_service:
     build: './socket_service'
     container_name: socket
@@ -35,7 +33,6 @@ services:
       - "3003:3000"
     volumes: 
       - ./socket_service:/src
-
 
   api_gateway:
     image: express-gateway:latest

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Home</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- <link rel="stylesheet" type="text/css" href="../static/css/styles.css"> -->
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../static/css/new_style.css">
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="container">
+			<div class="row">
+				<div class="well well-lg">
+					<h1>Emergency Prediction System</h1>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<form action="{{ url_for('predict')}}" method="POST">
+						<div class="form-group">
+							<label for="message">Enter Your Message Here</label>
+							<textarea rows="10"  type="text" name="message" class="form-control" id="message" placeholder="Enter message"></textarea>
+							<small id="emailHelp" class="form-text text-muted">Please be descriptive.</small>
+						</div>
+						<button type="submit" class="btn btn-primary">Predict</button>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<div class="page-header" style="margin-top: 0px !important">
+						<h3>Predictions</h3>      
+					</div>
+					<div>
+						{% if len == 0 %}
+							{% if prediction == None %}
+								<h5> Predictions will appear here. </h5>
+							{% else %}
+								<h5> '<b>{{ message }}</b>' seems to be an irrelevent message or system cannot decide. </h5>
+							{% endif %}
+						{% else %}
+							<h5> Prediction for '<b>{{ message }}</b>' </h5>
+							{% for i in range (0,len) %}
+								<h2>{{ prediction[i] }}</h2>
+							{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	
+
+</body>
+</html>
