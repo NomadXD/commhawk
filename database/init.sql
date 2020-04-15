@@ -117,25 +117,36 @@ CREATE TABLE Province(
     primary key(province_name)
 );
 
+CREATE TABLE Institute_Status(
+    institute_status varchar(31),
+    institute_status_code int not null UNIQUE,
+    primary key(institute_status)
+);
 
-CREATE TABLE Governemnt_Institute(
+
+CREATE TABLE Government_Institute(
     institute_id uuid4,
     institute_type int not null,
+    institute_status int not null,
     primary key(institute_id),
-    foreign key (institute_type) references Institute_type(institute_type) on delete cascade
+    foreign key (institute_type) references Institute_type(institute_type) on delete cascade,
+    foreign key (institute_status) references Institute_Status(institute_status_code) on delete cascade
 );
 
 CREATE TABLE Institute_Location(
     institute_id uuid4,
+    institute_type int not null,
     addr_line_1 varchar(127) not null,
     addr_line_2 varchar(127) not null,
     city varchar(31) not null,
     district varchar(31) not null,
     province varchar(7) not null,
     location GEOGRAPHY(POINT,4326) not null,
+    UNIQUE(city,institute_type),
     primary key(institute_id),
-    foreign key (institute_id) references Governemnt_Institute(institute_id) on delete cascade,
-    foreign key (province) references Province(province_code) on delete cascade 
+    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade,
+    foreign key (province) references Province(province_code) on delete cascade,
+    foreign key (institute_type) references Institute_type(institute_type) on delete cascade 
 );
 
 CREATE TABLE Institute_Contact_Info(
@@ -159,7 +170,7 @@ CREATE TABLE Hospital(
     ambulances int,
     capacity int,
     primary key (institute_id),
-    foreign key (institute_id) references Governemnt_Institute(institute_id) on delete cascade
+    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade
 );
 
 CREATE TABLE Police(
@@ -170,7 +181,7 @@ CREATE TABLE Police(
     weapons int,
     cells int,
     primary key(institute_id),
-    foreign key (institute_id) references Governemnt_Institute(institute_id) on delete cascade
+    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade
 );
 
 CREATE TABLE WeatherCenter(
@@ -179,7 +190,7 @@ CREATE TABLE WeatherCenter(
     temperature varchar(15),
     wind_speed varchar(15),
     primary key(institute_id),
-    foreign key (institute_id) references Governemnt_Institute(institute_id) on delete cascade
+    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade
 );
 
 CREATE TABLE FireStation(
@@ -187,7 +198,7 @@ CREATE TABLE FireStation(
     fire_trucks int,
     fire_fighters int,
     primary key (institute_id),
-    foreign key (institute_id) references Governemnt_Institute(institute_id) on delete cascade
+    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade
 );
 
 INSERT INTO Institute_type values ('Police Station',1);
@@ -207,6 +218,10 @@ INSERT INTO Province values ('Nothern Province','NP');
 INSERT INTO Province values ('Uwa Province','UP');
 INSERT INTO Province values ('Sabaragamuwa Province','SG');
 
+insert into institute_status values ('Unverified',1);
+insert into institute_status values ('Verified',2);
+
+
 
 CREATE OR REPLACE PROCEDURE createGovInstitute(UUID4, INT, VARCHAR(127), VARCHAR(127),
 										VARCHAR(31), VARCHAR(31), VARCHAR(7), GEOGRAPHY(POINT,4326),
@@ -215,8 +230,8 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 BEGIN
-  INSERT INTO Governemnt_Institute values ($1, $2); 
-  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
+  INSERT INTO Government_Institute values ($1, $2,1); 
+  INSERT INTO Institute_Location values ($1,$2, $3, $4, $5, $6, $7, $8);
   INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
   INSERT INTO Institute_credentials values ($1, $12);
 END;
