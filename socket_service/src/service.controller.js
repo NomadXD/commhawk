@@ -32,11 +32,13 @@ const createTableController = async (req,res) => {
         rethinkDB.createIncidentDoc(institute_id,broadcastChannel);
     }catch(err){
         res.json({
+            "status":500,
             "result" : "Document craetion failed"
         });
     }
 
     res.json({
+        "status": 201,
         "result": "Document successfully created"
     });
 
