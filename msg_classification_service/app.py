@@ -75,7 +75,7 @@ def predict():
 if __name__ == '__main__':
     clffile = bz2.BZ2File('model_14\smallerfile', 'rb')
   #  clffile = 'model_14/clf_RF_14.pickle'
-    tvfile = 'E:/tfidf_RF_14.pickle'
+    tvfile = 'model_14/tfidf_RF_14.pickle'
     clf = p.load(clffile)
     tv = p.load(open(tvfile, 'rb'))
     app.run(debug = True)
