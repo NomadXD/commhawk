@@ -45,13 +45,42 @@ const signUpController = async (req,res) => {
             "error": err
         })
     }
-
-
-
-
 }
 
 const signInController = async (req,res) => {
+
+    const {
+        body: {
+            type,city,password
+        },
+    } = req;
+    let params = [type,city]
+    try{
+        let data = await govModel.getInstituteInfo(params)
+        console.log(data)
+        let isPasswordValid = bcrypt.compareSync(password,data["password"])
+        if(isPasswordValid){
+            let token = jwt.sign({"id":data["institute_id"],"type":data["institute_type"],"status":data["institute_status"]},"secret")
+            res.status(200).send({
+                "status": 200,
+                "message": "Login success",
+                "account_status":data["institute_status"],
+                "token": token
+            })
+        }else{
+            res.status(401).send({
+                "status":401,
+                "message":"Invalid Password"
+            })
+        }
+    }catch(err){
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
+        })
+
+    }
+
 
 }
 
