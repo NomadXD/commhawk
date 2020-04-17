@@ -82,6 +82,15 @@ $$;
 CREATE EXTENSION postgis;
 CREATE EXTENSION postgis_topology;
 
+DROP TABLE IF EXISTS Government_Institute cascade;
+DROP TABLE IF EXISTS Province cascade;
+DROP TABLE IF EXISTS Institute_Status;
+DROP TABLE IF EXISTS Institute_type;
+DROP TABLE IF EXISTS Hospital_category;
+DROP TABLE IF EXISTS Police_station_category;
+DROP DOMAIN IF EXISTS UUID4 cascade;
+DROP PROCEDURE IF EXISTS createGovInstitute cascade;
+
 /*
       _                       _           
      | |                     (_)          
@@ -117,10 +126,23 @@ CREATE TABLE Province(
     primary key(province_name)
 );
 
+
 CREATE TABLE Institute_Status(
     institute_status varchar(31),
     institute_status_code int not null UNIQUE,
     primary key(institute_status)
+);
+
+CREATE TABLE Hospital_category(
+    hospital_category varchar(63),
+    hospital_category_code int not null UNIQUE,
+    primary key (hospital_category)
+);
+
+CREATE TABLE Police_station_category(
+    station_category varchar(63),
+    station_category_id varchar(7) not null UNIQUE,
+    primary key (station_category)
 );
 
 
@@ -135,23 +157,20 @@ CREATE TABLE Government_Institute(
 
 CREATE TABLE Institute_Location(
     institute_id uuid4,
-    institute_type int not null,
     addr_line_1 varchar(127) not null,
     addr_line_2 varchar(127) not null,
     city varchar(31) not null,
     district varchar(31) not null,
     province varchar(7) not null,
     location GEOGRAPHY(POINT,4326) not null,
-    UNIQUE(city,institute_type),
     primary key(institute_id),
     foreign key (institute_id) references Government_Institute(institute_id) on delete cascade,
-    foreign key (province) references Province(province_code) on delete cascade,
-    foreign key (institute_type) references Institute_type(institute_type) on delete cascade 
+    foreign key (province) references Province(province_code) on delete cascade
 );
 
 CREATE TABLE Institute_Contact_Info(
     institute_id uuid4,
-    email varchar(64) not null,
+    email varchar(63) not null,
     phone_number varchar(15) not null,
     fax varchar(15),
     primary key (institute_id)
@@ -165,23 +184,27 @@ CREATE TABLE Institute_credentials(
 
 CREATE TABLE Hospital(
     institute_id uuid4,
-    icu_beds int,
-    doctors int,
-    ambulances int,
-    capacity int,
+    hospital_category int not null,
+    icu_beds int not null,
+    doctors int not null,
+    ambulances int not null,
+    capacity int not null,
     primary key (institute_id),
-    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade
+    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade,
+    foreign key (hospital_category) references Hospital_category(hospital_category_code) on delete cascade
 );
 
 CREATE TABLE Police(
     institute_id uuid4,
-    motor_vehicles int,
-    motor_biycles int,
-    officers int,
-    weapons int,
-    cells int,
+    station_category varchar(7) not null,
+    motor_vehicles int not null,
+    motor_biycles int not null,
+    officers int not null,
+    weapons int not null,
+    cells int not null,
     primary key(institute_id),
-    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade
+    foreign key (institute_id) references Government_Institute(institute_id) on delete cascade,
+    foreign key (station_category) references Police_station_category(station_category_id) on delete cascade
 );
 
 CREATE TABLE WeatherCenter(
@@ -201,39 +224,92 @@ CREATE TABLE FireStation(
     foreign key (institute_id) references Government_Institute(institute_id) on delete cascade
 );
 
-INSERT INTO Institute_type values ('Police Station',1);
-INSERT INTO Institute_type values ('Hospital',2);
-INSERT INTO Institute_type values ('Weather Center',3);
-INSERT INTO Institute_type values ('Fire Station',4);
-INSERT INTO Institute_type values ('Provincial Council',5);
-INSERT INTO Institute_type values ('Social Service Office',6);
 
-INSERT INTO Province values ('Western Province','WP');
-INSERT INTO Province values ('North Central Province','NC');
-INSERT INTO Province values ('North Western Province','NW');
-INSERT INTO Province values ('Central Province','CP');
-INSERT INTO Province values ('Southern Province','SP');
-INSERT INTO Province values ('Eastern Province','EP');
-INSERT INTO Province values ('Nothern Province','NP');
-INSERT INTO Province values ('Uwa Province','UP');
-INSERT INTO Province values ('Sabaragamuwa Province','SG');
 
-insert into institute_status values ('Unverified',1);
-insert into institute_status values ('Verified',2);
+
+/*
+                               _                     
+                              | |                    
+  _ __  _ __ ___   ___ ___  __| |_   _ _ __ ___  ___ 
+ | '_ \| '__/ _ \ / __/ _ \/ _` | | | | '__/ _ \/ __|
+ | |_) | | | (_) | (_|  __/ (_| | |_| | | |  __/\__ \
+ | .__/|_|  \___/ \___\___|\__,_|\__,_|_|  \___||___/
+ | |                                                 
+ |_|                                                 
+*/
+
 
 
 
 CREATE OR REPLACE PROCEDURE createGovInstitute(UUID4, INT, VARCHAR(127), VARCHAR(127),
 										VARCHAR(31), VARCHAR(31), VARCHAR(7), GEOGRAPHY(POINT,4326),
-                                        VARCHAR(64), VARCHAR(15), VARCHAR(15),CHAR(60))
+                                        VARCHAR(63), VARCHAR(15), VARCHAR(15),CHAR(60))
 LANGUAGE plpgsql    
 AS $$
 DECLARE
 BEGIN
+    -- common for all the institutes
   INSERT INTO Government_Institute values ($1, $2,1); 
-  INSERT INTO Institute_Location values ($1,$2, $3, $4, $5, $6, $7, $8);
+  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
   INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
   INSERT INTO Institute_credentials values ($1, $12);
+END;
+$$;
+
+
+CREATE OR REPLACE PROCEDURE createPoliceStation(UUID4, INT, VARCHAR(127), VARCHAR(127),
+										VARCHAR(31), VARCHAR(31), VARCHAR(7), GEOGRAPHY(POINT,4326),
+                                        VARCHAR(63), VARCHAR(15), VARCHAR(15),CHAR(60),VARCHAR(7),INT,
+                                        INT, INT, INT, INT)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+BEGIN
+    -- common for all the institutes
+  INSERT INTO Government_Institute values ($1, $2,1); 
+  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
+  INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
+  INSERT INTO Institute_credentials values ($1, $12);
+    -- police station specific data
+  INSERT INTO Police values ($1,$13,$14,$15,$16,$17,$18); 
+END;
+$$;
+
+
+CREATE OR REPLACE PROCEDURE createHospital(UUID4, INT, VARCHAR(127), VARCHAR(127),
+										VARCHAR(31), VARCHAR(31), VARCHAR(7), GEOGRAPHY(POINT,4326),
+                                        VARCHAR(63), VARCHAR(15), VARCHAR(15),CHAR(60), INT,
+                                        INT, INT, INT, INT)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+BEGIN
+    -- common for all the institutes
+  INSERT INTO Government_Institute values ($1, $2,1); 
+  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
+  INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
+  INSERT INTO Institute_credentials values ($1, $12);
+    -- hospital specific data
+  INSERT INTO Hospital values ($1,$13,$14,$15,$16,$17); 
+END;
+$$;
+
+
+CREATE OR REPLACE PROCEDURE createFireStation(UUID4, INT, VARCHAR(127), VARCHAR(127),
+										VARCHAR(31), VARCHAR(31), VARCHAR(7), GEOGRAPHY(POINT,4326),
+                                        VARCHAR(63), VARCHAR(15), VARCHAR(15),CHAR(60), INT,
+                                        INT)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+BEGIN
+    -- common for all the institutes
+  INSERT INTO Government_Institute values ($1, $2,1); 
+  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
+  INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
+  INSERT INTO Institute_credentials values ($1, $12);
+    -- firestation specific data
+  INSERT INTO FireStation values ($1,$13,$14); 
 END;
 $$;
 
