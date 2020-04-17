@@ -41,6 +41,7 @@ const removeSocket = async (socketId) => {
 
 const createIncidentDoc = async (instituteId,broadCastChannel) => {
     r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
+        // eslint-disable-next-line no-unused-vars
         r.db("commhawk").tableCreate(instituteId).run(conn,function(err,res){
             if (err) throw err;
             return r.db("commhawk").table(instituteId).changes().run(conn,function(err,cursor){
@@ -62,13 +63,35 @@ const dispatchIncident = async (instituteId,broadCastChannel,incident) => {
         if (err) throw err;
         cursor.toArray(function(err, result) {
             if (err) throw err;
-            let institute = result[0];
             console.log(result[0].socketId);
             broadCastChannel.to(result[0].socketId).emit("Incident",incident);
         });
     });
     });
 };
+
+
+// const getAllIncidents = async (instituteId) => {
+//     r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
+//         r.db("commhawk").table(instituteId).filter(r.row("instituteId").eq(instituteId)).
+//         run(conn, function(err, cursor) {
+//             if (err) throw err;
+//             cursor.toArray(function(err, result) {
+//                 if (err) throw err;
+//                 console.log(result[0].socketId);
+//                 broadCastChannel.to(result[0].socketId).emit("Incident",incident);
+//             });
+//         });
+//         });
+
+
+// };
+
+// const individualIncidentReport = async (incidentObj) => {
+
+
+
+// };
 
 
 

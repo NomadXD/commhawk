@@ -92,11 +92,11 @@ const deleteUserController = async (req,res) => {
 
 const getUserController = async (req,res) => {
 
-    res.json({
-        "success":200,
-        "user":req.user,
-        "data":req.body
-    });
+    const data = await userModel.getUserDetails(req.params.userId);
+
+   res.json({
+       "userdata": data
+   });
 
 };
 

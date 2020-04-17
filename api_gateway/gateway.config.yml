@@ -26,7 +26,8 @@ apiEndpoints:
     host: '*'
     paths:
       - '/api/socket/broadcast'
-      - '/api/socket/test' 
+      - '/api/socket/test'
+      - '/api/socket/send-message' 
 serviceEndpoints:
   noAuthService:
     url: 'http://uds:3000'
@@ -57,11 +58,7 @@ pipelines:
         - action:
             secretOrPublicKey: 'secret'
             checkCredentialExistence: false
-            passThrough: true
-      - terminate:
-        - action:
-            statusCode : 404
-            message : "Bad"     
+            passThrough: true  
       
       - request-transformer:
         - action:
@@ -76,6 +73,15 @@ pipelines:
     apiEndpoints:
       - socket
     policies:
+      - jwt:
+        - action:
+            secretOrPublicKey: 'secret'
+            checkCredentialExistence: false
+      - request-transformer:
+        - action:
+            body:
+              add:
+                token: req.user
       - proxy:
         - action:
             serviceEndpoint: socketService

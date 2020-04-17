@@ -16,7 +16,16 @@ const getUserPassword = async (nic) => {
     let result = await pool.query(queryString,values);
     console.log(result.rows[0]);
     return result.rows[0];
-}; 
+};
+
+const getUserDetails = async (id) => {
+    console.log(id);
+    const queryString = "SELECT * from userdetail where user_id = $1";
+    const values = [id];
+    const result = await pool.query(queryString,values);
+    console.log(result);
+    return result.rows[0];
+};
 
 
-module.exports = {createUser,getUserPassword};
+module.exports = {createUser,getUserPassword,getUserDetails};
