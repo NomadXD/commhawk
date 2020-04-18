@@ -190,9 +190,10 @@ CREATE TABLE Hospital(
     ambulances int not null,
     capacity int not null,
     primary key (institute_id),
+    UNIQUE(hospital_category,city),
     foreign key (institute_id) references Government_Institute(institute_id) on delete cascade,
     foreign key (hospital_category) references Hospital_category(hospital_category_code) on delete cascade
-);
+) INHERITS (Institute_Location);
 
 CREATE TABLE Police(
     institute_id uuid4,
@@ -203,9 +204,10 @@ CREATE TABLE Police(
     weapons int not null,
     cells int not null,
     primary key(institute_id),
+    UNIQUE(city),
     foreign key (institute_id) references Government_Institute(institute_id) on delete cascade,
     foreign key (station_category) references Police_station_category(station_category_id) on delete cascade
-);
+) INHERITS (Institute_Location);
 
 CREATE TABLE WeatherCenter(
     institute_id uuid4,
@@ -221,8 +223,9 @@ CREATE TABLE FireStation(
     fire_trucks int,
     fire_fighters int,
     primary key (institute_id),
+    UNIQUE(city),
     foreign key (institute_id) references Government_Institute(institute_id) on delete cascade
-);
+) INHERITS (Institute_Location);
 
 
 
@@ -267,11 +270,11 @@ DECLARE
 BEGIN
     -- common for all the institutes
   INSERT INTO Government_Institute values ($1, $2,1); 
-  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
+  --INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
   INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
   INSERT INTO Institute_credentials values ($1, $12);
     -- police station specific data
-  INSERT INTO Police values ($1,$13,$14,$15,$16,$17,$18); 
+  INSERT INTO Police values ($1, $3, $4, $5, $6, $7, $8, $13, $14, $15, $16, $17, $18); 
 END;
 $$;
 
@@ -286,11 +289,11 @@ DECLARE
 BEGIN
     -- common for all the institutes
   INSERT INTO Government_Institute values ($1, $2,1); 
-  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
+  --INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
   INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
   INSERT INTO Institute_credentials values ($1, $12);
     -- hospital specific data
-  INSERT INTO Hospital values ($1,$13,$14,$15,$16,$17); 
+  INSERT INTO Hospital values ($1, $3, $4, $5, $6, $7, $8, $13, $14, $15, $16, $17); 
 END;
 $$;
 
@@ -305,11 +308,11 @@ DECLARE
 BEGIN
     -- common for all the institutes
   INSERT INTO Government_Institute values ($1, $2,1); 
-  INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
+  --INSERT INTO Institute_Location values ($1, $3, $4, $5, $6, $7, $8);
   INSERT INTO Institute_Contact_Info values ($1, $9, $10, $11);
   INSERT INTO Institute_credentials values ($1, $12);
     -- firestation specific data
-  INSERT INTO FireStation values ($1,$13,$14); 
+  INSERT INTO FireStation values ($1, $3, $4, $5, $6, $7, $8, $13, $14); 
 END;
 $$;
 
