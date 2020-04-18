@@ -173,13 +173,15 @@ CREATE TABLE Institute_Contact_Info(
     email varchar(63) not null,
     phone_number varchar(15) not null,
     fax varchar(15),
-    primary key (institute_id)
+    primary key (institute_id),
+    foreign key (institute_id) references Government_Institute(institute_id)
 );
 
 CREATE TABLE Institute_credentials(
     institute_id uuid4,
     password char(60) not null,
-    primary key(institute_id)
+    primary key(institute_id),
+    foreign key (institute_id) references Government_Institute(institute_id)
 );
 
 CREATE TABLE Hospital(
