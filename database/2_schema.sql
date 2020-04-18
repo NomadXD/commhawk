@@ -336,8 +336,10 @@ BEGIN
 	LOOP 
 		EXIT WHEN result is not null;  
 		result := (SELECT hospital.institute_id
-    			FROM hospital   
-    			WHERE ST_DWithin(hospital.location,given_point,initial_radius)   
+    			FROM hospital,government_institute   
+    			WHERE ST_DWithin(hospital.location,given_point,initial_radius) AND
+				  hospital.institute_id = government_institute.institute_id AND
+				  government_institute.institute_status = 2
     			ORDER BY ST_Distance(hospital.location,given_point) 
     			LIMIT 1);
 		initial_radius := initial_radius + 10000 ;
@@ -366,15 +368,17 @@ CREATE OR REPLACE FUNCTION getPoliceStation(lng NUMERIC,lat NUMERIC)
 	) AS $$ 
 DECLARE
    given_point GEOGRAPHY := ST_SetSRID(ST_MakePoint($1,$2),4326);
-   initial_radius INT := 30000;
+   initial_radius INT := 20000;
    result UUID4 := null;
    data RECORD := null;
 BEGIN	
 	LOOP 
 		EXIT WHEN result is not null;  
 		result := (SELECT police.institute_id
-    			FROM police   
-    			WHERE ST_DWithin(police.location,given_point,initial_radius)   
+    			FROM police, government_institute
+    			WHERE ST_DWithin(police.location,given_point,initial_radius) AND
+          government_institute.institute_id = police.institute_id AND
+          government_institute.institute_status = 2
     			ORDER BY ST_Distance(police.location,given_point) 
     			LIMIT 1);
 		initial_radius := initial_radius + 10000 ;
@@ -384,12 +388,45 @@ BEGIN
 		police.institute_id,
 		police.city
 	FROM 
-		police,
-		government_institute
+		police
 	WHERE 
-		police.institute_id = result and
-		government_institute.institute_id = police.institute_id and
-		government_institute.institute_status = 1
+		police.institute_id = result
+	;
+END ; 
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION getFireStation(lng NUMERIC,lat NUMERIC) 
+	RETURNS TABLE(
+	institute_id UUID4,
+	city varchar(31)
+	) AS $$ 
+DECLARE
+   given_point GEOGRAPHY := ST_SetSRID(ST_MakePoint($1,$2),4326);
+   initial_radius INT := 40000;
+   result UUID4 := null;
+   data RECORD := null;
+BEGIN	
+	LOOP 
+		EXIT WHEN result is not null;  
+		result := (SELECT firestation.institute_id
+    			FROM firestation,government_institute   
+    			WHERE ST_DWithin(firestation.location,given_point,initial_radius) AND
+				firestation.institute_id = government_institute.institute_id AND
+				government_institute.institute_status = 2
+    			ORDER BY ST_Distance(firestation.location,given_point) 
+    			LIMIT 1);
+		initial_radius := initial_radius + 10000 ;
+	END LOOP ; 
+	
+	RETURN QUERY SELECT 
+		firestation.institute_id,
+		firestation.city
+	FROM 
+		firestation
+	WHERE 
+		firestation.institute_id = result
 	;
 END ; 
 $$ LANGUAGE plpgsql;

@@ -16,3 +16,4 @@ CALL createPoliceStation('99c32d8b-4b5e-44d0-aa09-c80664044381',1,'Galle road','
 
 
 
+CALL createFireStation('c2376eeb-704e-4aa5-8805-7ae2574a1e40',4,'Main street','Horana','Horana','Kalutara','WP',ST_SetSRID(ST_MakePoint(80.062324,6.714721),4326),'horana@station.fire.lk','0342 267 555','0342 267 555','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q',2,10);
