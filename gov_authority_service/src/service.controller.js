@@ -93,4 +93,26 @@ const signInController = async (req,res) => {
 }
 
 
-module.exports = {signUpController, signInController}
+const autoAssignInstituteController = async (req,res) => {
+
+    const location = req.body.location
+    const categories  =req.body.categories
+    try {
+        const relatedInstitutes = await govModel.getRelatedInsitute(location,categories)
+        console.log(location)
+        console.log(categories)
+        res.json({
+            "institutes": relatedInstitutes
+        })
+        
+    } catch (error) {
+        console.log(error)
+    }
+
+    
+    
+
+}
+
+
+module.exports = {signUpController, signInController, autoAssignInstituteController}

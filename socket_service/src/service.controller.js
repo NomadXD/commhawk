@@ -1,5 +1,5 @@
 const rethinkDB = require("./service.rethinkdb");
-const uuid = require("uuid/v4");
+//const uuid = require("uuid/v4");
 const fetch = require("node-fetch");
 
 
@@ -15,18 +15,27 @@ const dispatchBroadcast = async (req,res) => {
 // eslint-disable-next-line no-unused-vars
 const messengeSenderController = async (req,res) => {
 
-    // TODO send to NLP service
+    const body = req.body;
 
-    // TODO send to Gov auth service
+    const govDataPromise = fetch("http://gov_auth:3000/api/gov/get-related-institutes",{
+                                        method: "post",
+                                        body:    JSON.stringify(body),
+                                        headers: { "Content-Type": "application/json" },
+                                }); 
 
-    // TODO send to user data service
-    const userDataResponse = await fetch(`http://uds:3000/api/user/${req.body.token.id}`).then(res => res.json());
+   
+    const userDataPromise = fetch(`http://uds:3000/api/user/${req.body.token.id}`);
 
-    console.log(userDataResponse);
+    const promises = [govDataPromise,userDataPromise];
+    const [govDataResponse,userDataResponse] = await Promise.all(promises);
+    const govDataJSON = await govDataResponse.json();
+    const userDataJSON = await userDataResponse.json();
+    
 
     res.json({
         "message":"Success",
-        "data": userDataResponse
+        "data": userDataJSON,
+        "gov": govDataJSON
     });
 
 
@@ -46,7 +55,7 @@ const createTableController = async (req,res) => {
     }catch(err){
         res.json({
             "status":500,
-            "result" : "Document craetion failed"
+            "result" : "Document craetion failed!"
         });
     }
 

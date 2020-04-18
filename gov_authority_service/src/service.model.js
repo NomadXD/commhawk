@@ -80,4 +80,55 @@ const getLoginInformation = async (params) => {
     return result.rows[0]
 }
 
-module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation}
+const getRelatedInsitute = async (location,categories) => {
+    var institutes = [];
+    
+    for await (const category of categories){
+
+        if(category === SERVICE_ENUM.INSTITUTE_TYPES.Police_station){
+
+            const policeQueryString = `SELECT * from getPoliceStation($1,$2)`
+            const values = [location.lng,location.lat]
+            const result = await pool.query(policeQueryString,values)
+            result.rows[0]['displayName'] = "Police station - "+ result.rows[0].city
+            result.rows[0]['instituteType'] = 1
+            institutes.push(result.rows[0])
+    
+        }else if(category === SERVICE_ENUM.INSTITUTE_TYPES.Hospital){
+
+            const hospitalQueryString = `SELECT * from getHospital($1,$2)`
+            const values = [location.lng,location.lat]
+            const result = await pool.query(hospitalQueryString,values)
+            result.rows[0]['displayName'] = result.rows[0].hospital_type+" - "+result.rows[0].city
+            result.rows[0]['instituteType'] = 2
+            institutes.push(result.rows[0])
+        
+        }else if (category === SERVICE_ENUM.INSTITUTE_TYPES.Fire_station){
+
+            const fireStationQueryString = `SELECT * from getFireStation($1,$2)`
+            const values = [location.lng,location.lat]
+            const result = await pool.query(fireStationQueryString,values)
+            result.rows[0]['displayName'] = "Fire station - "+ result.rows[0].city
+            result.rows[0]['instituteType'] = 4
+            institutes.push(result.rows[0])
+            
+        }else if (category === SERVICE_ENUM.INSTITUTE_TYPES.Weather_center){
+
+            const result = await pool.query(`SELECT institute_id from government_institute where institute_type = 3`)
+            result.rows[0]['displayName'] = "Weather Services Center"
+            institutes.push(result.rows[0])
+
+        }else if (category === SERVICE_ENUM.INSTITUTE_TYPES.Social_service){
+
+            const result = await pool.query(`SELECT institute_id from government_institute where institute_type = 6`)
+            result.rows[0]['displayName'] = "Social Services Center"
+            institutes.push(result.rows[0])
+        }
+
+
+    }
+
+    return institutes;
+}
+
+module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute}

@@ -17,3 +17,9 @@ CALL createPoliceStation('99c32d8b-4b5e-44d0-aa09-c80664044381',1,'Galle road','
 
 
 CALL createFireStation('c2376eeb-704e-4aa5-8805-7ae2574a1e40',4,'Main street','Horana','Horana','Kalutara','WP',ST_SetSRID(ST_MakePoint(80.062324,6.714721),4326),'horana@station.fire.lk','0342 267 555','0342 267 555','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q',2,10);
+
+
+
+CALL createGovInstitute('f274bdd4-8213-4b23-8fcb-994af0cd094d',3,'Meteorology Department,Baudhdhaloka mawatha ','Colombo 07','Colombo','Colombo','WP',ST_SetSRID(ST_MakePoint(79.872603,6.905347),4326),'meteorology@gov.lk','0112 694 846','0112 694 846','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q');
+
+CALL createGovInstitute('b17db592-6c65-4ec7-b5bc-e1b2483eeacf',6,'Social service department','Colombo 07','Colombo','Colombo','WP',ST_SetSRID(ST_MakePoint(79.874783,6.903048),4326),'social@gov.lk','0112 694 999','0112 694 999','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q');
