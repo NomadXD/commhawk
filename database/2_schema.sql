@@ -318,3 +318,42 @@ BEGIN
 END;
 $$;
 
+
+
+
+CREATE OR REPLACE FUNCTION getHospital(lng NUMERIC,lat NUMERIC) 
+	RETURNS TABLE(
+	institute_id UUID4,
+	city varchar(31),
+	hospital_type varchar(63)
+	) AS $$ 
+DECLARE
+   given_point GEOGRAPHY := ST_SetSRID(ST_MakePoint($1,$2),4326);
+   initial_radius INT := 30000;
+   result UUID4 := null;
+   data RECORD := null;
+BEGIN	
+	LOOP 
+		EXIT WHEN result is not null;  
+		result := (SELECT hospital.institute_id
+    			FROM hospital   
+    			WHERE ST_DWithin(hospital.location,given_point,initial_radius)   
+    			ORDER BY ST_Distance(hospital.location,given_point) 
+    			LIMIT 1);
+		initial_radius := initial_radius + 10000 ;
+	END LOOP ; 
+	
+	RETURN QUERY SELECT 
+		hospital.institute_id,
+		hospital.city,
+		hospital_category.hospital_category
+	FROM 
+		hospital,
+		hospital_category
+	WHERE 
+		hospital.institute_id = result and
+		hospital.hospital_category = hospital_category.hospital_category_code
+	;
+END ; 
+$$ LANGUAGE plpgsql;
+
