@@ -17,21 +17,30 @@ apiEndpoints:
       - '/api/user/delete'
       - '/api/user/:userId'
     methods: ["GET","POST","PUT","DELETE"]
+  gov:
+    host: '*'
+    paths:
+      - '/api/gov/signup'
+      - '/api/gov/signin'
   socket:
     host: '*'
     paths:
       - '/api/socket/broadcast'
-      - '/api/socket/test' 
+      - '/api/socket/test'
+      - '/api/socket/send-message' 
 serviceEndpoints:
   noAuthService:
     url: 'http://uds:3000'
   socketService:
     url: 'htpp://socket:3000'
+  govAuthService:
+    url: 'http://gov_auth:3000'
 policies:
   - log
   - proxy
   - jwt
   - request-transformer
+  - terminate
 pipelines:
   noAuth:
     apiEndpoints:
@@ -48,7 +57,8 @@ pipelines:
       - jwt:
         - action:
             secretOrPublicKey: 'secret'
-            checkCredentialExistence: false      
+            checkCredentialExistence: false
+            passThrough: true  
       
       - request-transformer:
         - action:
@@ -63,7 +73,24 @@ pipelines:
     apiEndpoints:
       - socket
     policies:
+      - jwt:
+        - action:
+            secretOrPublicKey: 'secret'
+            checkCredentialExistence: false
+      - request-transformer:
+        - action:
+            body:
+              add:
+                token: req.user
       - proxy:
         - action:
             serviceEndpoint: socketService
+  
+  gov_auth:
+    apiEndpoints:
+      - gov
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: govAuthService
       

@@ -2,11 +2,19 @@ const admin = require("firebase-admin");
 const cron = require("node-cron");
 const getCurrentProvince = require("./service.provinceclassifier");
 const firestore  = require("./service.firestore");
+const rethinkDB = require("./service.rethinkdb");
 
 const getBroadcastChannel = (io) => {
-  const broadcastChannel = io.of("/broadcast");    
+  const broadcastChannel = io.of("/broadcast");
+  
+  broadcastChannel.use(
+    function(socket,next){
+      require("./service.middleware").socketJWTAuthentication(socket,next);
+    }
+  );
 
   broadcastChannel.on("connection", function (socket) {
+      rethinkDB.saveSocketID(socket.id,socket.decoded["id"]);
       socket.emit("connected", { hello: "world" });
       socket.on("my other event", function (data) {
         console.log(data);
@@ -18,6 +26,10 @@ const getBroadcastChannel = (io) => {
         let arrUnion = Ref.update({
         users: admin.firestore.FieldValue.arrayUnion("bk3RNwTe3H0dgfgggk_HHwgIpoDKCIZvvDMExUdFQ3P1")
       });
+      });
+
+      socket.on("disconnect",function(){
+        rethinkDB.removeSocket(socket.id);
       });
       
     });
