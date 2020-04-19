@@ -1,4 +1,6 @@
 
+\c gov_auth;
+
 CALL createHospital('141d2274-589c-4abc-8ad7-ec95bf6aea6c',2,'Matugama road','Kalutara','Kalutara','Kalutara','WP',ST_SetSRID(ST_MakePoint(79.985272,6.563441),4326),'nagoda@health.gov.lk','0342 222 261','0342 222 261','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q',2,10,60,8,400);
 CALL createHospital('a576f573-948f-4725-8fa6-6aaf082555d6',2,'Galle road','Beruwala','Beruwala','Kalutara','WP',ST_SetSRID(ST_MakePoint(79.983481,6.472330),4326),'beruwala@health.gov.lk','0342 276 162','0342 276 162','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q',3,3,10,2,40);
 CALL createHospital('221c0e31-25fc-4e50-ab80-7bf14cba4e9d',2,'Galle road','Panadura','Panadura','Kalutara','WP',ST_SetSRID(ST_MakePoint(79.906842,6.721835),4326),'panadura@health.gov.lk','0382 232 262','0382 232 262','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q',3,10,32,5,150);
