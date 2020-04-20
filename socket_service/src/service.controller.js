@@ -1,6 +1,7 @@
 const rethinkDB = require("./service.rethinkdb");
 //const uuid = require("uuid/v4");
 const fetch = require("node-fetch");
+const uuid = require("uuid/v4");
 
 
 const dispatchBroadcast = async (req,res) => {
@@ -30,6 +31,13 @@ const messengeSenderController = async (req,res) => {
     const [govDataResponse,userDataResponse] = await Promise.all(promises);
     const govDataJSON = await govDataResponse.json();
     const userDataJSON = await userDataResponse.json();
+
+    // create report document
+
+
+    rethinkDB.createReportDoc(govDataJSON.institutes,userDataJSON.userdata,{"id":uuid()});
+  
+
     
 
     res.json({
@@ -67,4 +75,12 @@ const createTableController = async (req,res) => {
 };
 
 
-module.exports = {dispatchBroadcast, messengeSenderController, createTableController};
+const watchChangesController = async (req,res) => {
+    rethinkDB.watchChanges(req.broadcastChannel);
+    res.json({
+        "true":"True"
+    });
+};
+
+
+module.exports = {dispatchBroadcast, messengeSenderController, createTableController, watchChangesController};

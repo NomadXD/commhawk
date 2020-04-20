@@ -5,6 +5,9 @@ const initiateRealTimeDB = async () => {
       r.dbList()
         .contains("commhawk")
         .do(function (databaseExists) {
+            // if(databaseExists){
+            //     watchChanges(conn);
+            // }
           return r.branch(
             databaseExists,
             { dbs_created: 0 },
@@ -42,17 +45,82 @@ const removeSocket = async (socketId) => {
 const createIncidentDoc = async (instituteId,broadCastChannel) => {
     r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
         // eslint-disable-next-line no-unused-vars
-        r.db("commhawk").tableCreate(instituteId).run(conn,function(err,res){
+        r.db("commhawk").tableCreate(instituteId).run(conn,async function(err,res){
             if (err) throw err;
+
+            await r.db("commhawk").table(instituteId).insert({
+                "institute_id": instituteId,
+                "report_count": 0,
+                "reports":[]
+            }).run(conn);
+
             return r.db("commhawk").table(instituteId).changes().run(conn,function(err,cursor){
                 cursor.each(function(err, row) {
                     if (err) throw err;
+                    console.log("Chnage captured to Institute table");
                     dispatchIncident(instituteId,broadCastChannel,row);
                 });
             });
         });
     
     });    
+};
+
+const createReportDoc = async (institutes,user,report) => {
+    let institute_ids = [];
+    for await (const institute of institutes){
+        institute_ids.push(institute.institute_id);
+    }
+    
+    r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
+        // eslint-disable-next-line no-unused-vars
+        r.db("commhawk").tableCreate(report.id).run(conn,async function(err,res){
+            if (err) throw err;
+            // insert report and instittutes to auto assigned
+            // set up listners
+            await r.db("commhawk").table(report.id).insert({
+                "report_id": report.id,
+                "user_details":user,
+                "auto_assigned":institutes,
+                "ids":institute_ids,
+                "forwarded":[],
+                "status": 0,
+                "logs":[],
+                "report":report
+                
+            }).run(conn);
+
+            institute_ids.forEach(id => {
+                console.log("Before auto assign");
+                const date = new Date();
+                const timestamp = date.getTime();
+                r.db("commhawk").table(id).update({
+                    "reports": r.row("reports").append({"id":report.id,"timestamp": r.epochTime(timestamp/1000.0)})
+                }).run(conn);
+            });
+
+            return r.db("commhawk").table(report.id).getField("forwarded").changes().run(conn,function(err,cursor){
+                console.log("Change captured in forward");
+                const date = new Date();
+                const timestamp = date.getTime();
+                cursor.each(function(err, row) {
+                    console.log(row.new_val[0]);
+                    if (err) throw err;
+                    r.db("commhawk").table(row.new_val[0]).update({
+                        "reports": r.row("reports").append({"id":report.id,"timestamp": r.epochTime(timestamp/1000.0)})
+                        
+                    }).run(conn);
+                    console.log("Doneeeeeeeeeeeeee");
+                    //dispatchIncident(instituteId,broadCastChannel,row);
+                });
+            });
+        });
+
+    });
+    
+    
+   
+
 };
 
 
@@ -63,11 +131,69 @@ const dispatchIncident = async (instituteId,broadCastChannel,incident) => {
         if (err) throw err;
         cursor.toArray(function(err, result) {
             if (err) throw err;
-            console.log(result[0].socketId);
-            broadCastChannel.to(result[0].socketId).emit("Incident",incident);
+            console.log("Dispatching to :"+instituteId);
+            if(result[0]){
+                broadCastChannel.to(result[0].socketId).emit("Incident",incident);
+            }
+           
         });
     });
     });
+};
+
+
+const watchChanges = async (broadCastChannel) => {
+    r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
+    r.db("commhawk").tableList().run(conn,function(err,cursor){
+        cursor.each(function(err,row){
+            if (err) throw err;
+            r.db("commhawk").table(row).hasFields("institute_id").run(conn,function(err,cursor){
+                cursor.toArray(function(err,result){
+                    if(result[0]){
+                        console.log(result[0].institute_id);
+                        return r.db("commhawk").table(result[0].institute_id).changes().run(conn,function(err,cursor){
+                            cursor.each(function(err, row) {
+                                if (err) throw err;
+                                console.log("Changed");
+                                dispatchIncident(result[0].institute_id,broadCastChannel,row);
+                            });
+                        });
+                    }
+
+                });
+
+                r.db("commhawk").table(row).hasFields("report_id").run(conn,function(err,cursor){
+                    cursor.toArray(function(err,result){
+                        if(result[0]){
+                            console.log(result[0].report_id);
+                            return r.db("commhawk").table(result[0].report_id).getField("forwarded").changes().run(conn,function(err,cursor){
+                                console.log("Here");
+                                const date = new Date();
+                                const timestamp = date.getTime();
+                                cursor.each(function(err, row) {
+                                    console.log(row.new_val[0]);
+                                    if (err) throw err;
+                                    r.db("commhawk").table(row.new_val[0]).update({
+                                        "reports": r.row("reports").append({"id":result[0].report_id,"timestamp": r.epochTime(timestamp/1000.0)})
+                                        
+                                    }).run(conn);
+                                    console.log("Doneeeeeeeeeeeeee");
+                                    //dispatchIncident(instituteId,broadCastChannel,row);
+                                });
+                            });
+
+                        }
+                    });
+
+                });
+
+
+            });
+        });
+
+    });
+});
+
 };
 
 
@@ -95,5 +221,5 @@ const dispatchIncident = async (instituteId,broadCastChannel,incident) => {
 
 
 
-module.exports = {initiateRealTimeDB,saveSocketID,removeSocket,createIncidentDoc,dispatchIncident};
+module.exports = {initiateRealTimeDB,saveSocketID,removeSocket,createIncidentDoc,dispatchIncident,createReportDoc,watchChanges};
 
