@@ -35,7 +35,7 @@ const messengeSenderController = async (req,res) => {
     // create report document
 
 
-    rethinkDB.createReportDoc(govDataJSON.institutes,userDataJSON.userdata,{"id":uuid()});
+    rethinkDB.createReportDoc(govDataJSON.institutes,userDataJSON.userdata,{"id":uuid()},req.broadcastChannel);
   
 
     

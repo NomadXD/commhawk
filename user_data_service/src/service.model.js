@@ -23,7 +23,6 @@ const getUserDetails = async (id) => {
     const queryString = "SELECT * from userdetail where user_id = $1";
     const values = [id];
     const result = await pool.query(queryString,values);
-    console.log(result);
     return result.rows[0];
 };
 
