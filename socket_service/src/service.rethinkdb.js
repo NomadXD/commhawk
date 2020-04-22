@@ -54,9 +54,10 @@ const createIncidentDoc = async (instituteId,broadCastChannel) => {
                 "reports":[]
             }).run(conn);
 
-            return r.db("commhawk").table(instituteId).changes().run(conn,function(err,cursor){
+            return r.db("commhawk").table(instituteId).getField("reports").changes().run(conn,function(err,cursor){
                 cursor.each(function(err, row) {
                     if (err) throw err;
+                    console.log(row);
                     console.log("Chnage captured to Institute table " +instituteId);
                     // Get the related report and replace with row
                     dispatchIncident(instituteId,broadCastChannel,row,"Incident");
@@ -121,6 +122,7 @@ const createReportDoc = async (institutes,user,report,broadCastChannel) => {
                                 
                             }).run(conn);
                             institute_ids.push(id[0]);
+                            console.log(institute_ids);
 
                             // disptach 
 
@@ -173,14 +175,14 @@ const dispatchIncident = async (instituteId,broadCastChannel,incident,emitterNam
 
 
 const watchChanges = async (broadCastChannel) => {
-    r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
-    r.db("commhawk").tableList().run(conn,function(err,cursor){
-        cursor.each(function(err,row){
+    r.connect({ host: "rethinkdb", port: 28015 },async function (err, conn) {
+    r.db("commhawk").tableList().run(conn, async function(err,cursor){
+        cursor.each(async function(err,row){
             if (err) throw err;
-            r.db("commhawk").table(row).hasFields("institute_id").run(conn,function(err,cursor){
+            r.db("commhawk").table(row).hasFields("institute_id").run(conn,async function(err,cursor){
                 cursor.toArray(function(err,result){
                     if(result[0]){
-                        console.log(result[0].institute_id);
+                        console.log("Institute: " +result[0].institute_id);
                         return r.db("commhawk").table(result[0].institute_id).changes().run(conn,function(err,cursor){
                             cursor.each(function(err, row) {
                                 if (err) throw err;
@@ -192,19 +194,29 @@ const watchChanges = async (broadCastChannel) => {
 
                 });
 
-                r.db("commhawk").table(row).hasFields("report_id").run(conn,function(err,cursor){
-                    cursor.toArray(function(err,result){
+                r.db("commhawk").table(row).hasFields("report_id").run(conn,async function(err,cursor){
+                    cursor.toArray(async function(err,result){
                         if(result[0]){
-                            console.log(result[0].report_id);
-                            const report_id = result[0].report_id;
-                            return r.db("commhawk").table(report.id).getField("subscribed").changes().run(conn,function(err,cursor){
-                                console.log("Change captured in forward");
+                            //console.log(result[0]);
+                            console.log("Report: "+result[0].report_id);
+                            // const report_id = result[0].report_id;
+                            let institute_ids = [];
+                            await r.db("commhawk").table(result[0].report_id).pluck("ids").run(conn,async function(err,cursor){
+                               cursor.toArray(function(err,result){
+                                    result[0].ids.forEach(id => {
+                                        institute_ids.push(id);
+                                    });
+                                  
+
+                               });
+
+                            });
+                            
+                            return r.db("commhawk").table(result[0].report_id).getField("subscribed").changes().run(conn,function(err,cursor){
+                                //console.log("Change captured in forward");
                                 const date = new Date();
                                 const timestamp = date.getTime();
                                 cursor.each(function(err, row) {
-                                    console.log(row);
-                                    //console.log(row.new_val[0])
-                
                                     if (err) throw err;
                                     if(row.new_val.forwarded.length != row.old_val.forwarded.length){
                                         let id = row.new_val.forwarded.filter(x => ! row.old_val.forwarded.includes(x));
@@ -212,7 +224,7 @@ const watchChanges = async (broadCastChannel) => {
                                         // id[0] is taken because only 1 change can happen at a time.
                 
                                             r.db("commhawk").table(id[0]).update({
-                                                "reports": r.row("reports").append({"id":report.id,"timestamp": r.epochTime(timestamp/1000.0)})
+                                                "reports": r.row("reports").append({"id":result[0].report_id,"timestamp": r.epochTime(timestamp/1000.0)})
                                                 
                                             }).run(conn);
                                             institute_ids.push(id[0]);
@@ -222,7 +234,7 @@ const watchChanges = async (broadCastChannel) => {
                                     }else if (row.new_val.status != row.old_val.status){
                                         institute_ids.forEach(id => {
                                             console.log("Dispatching status");
-                                            dispatchIncident(id,broadCastChannel,{"report_id":report.id,"status":row.new_val.status},"Incident");
+                                            dispatchIncident(id,broadCastChannel,{"report_id":result[0].report_id,"status":row.new_val.status},"Incident");
                                         });
                                     }else if(row.new_val.log.length != row.old_val.log.length){
                                         let new_message = row.new_val.log.filter(x => ! row.old_val.log.includes(x));
@@ -249,8 +261,8 @@ const watchChanges = async (broadCastChannel) => {
         });
 
     });
+    
 });
-
 };
 
 
