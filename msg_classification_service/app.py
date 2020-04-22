@@ -14,6 +14,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import zipfile
 import bz2
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -73,9 +74,10 @@ def predict():
 
 
 if __name__ == '__main__':
-    clffile = bz2.BZ2File('model_14\smallerfile', 'rb')
+    clffile = bz2.BZ2File('model_14/smallerfile', 'rb')
   #  clffile = 'model_14/clf_RF_14.pickle'
     tvfile = 'model_14/tfidf_RF_14.pickle'
     clf = p.load(clffile)
     tv = p.load(open(tvfile, 'rb'))
-    app.run(debug = True)
+    #app.run(debug = True)
+    serve(app, host='0.0.0.0', port=8000)
