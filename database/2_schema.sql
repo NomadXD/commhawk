@@ -339,7 +339,7 @@ BEGIN
     			FROM hospital,government_institute   
     			WHERE ST_DWithin(hospital.location,given_point,initial_radius) AND
 				  hospital.institute_id = government_institute.institute_id AND
-				  government_institute.institute_status = 2
+				  government_institute.institute_status = 1
     			ORDER BY ST_Distance(hospital.location,given_point) 
     			LIMIT 1);
 		initial_radius := initial_radius + 10000 ;
@@ -378,7 +378,7 @@ BEGIN
     			FROM police, government_institute
     			WHERE ST_DWithin(police.location,given_point,initial_radius) AND
           government_institute.institute_id = police.institute_id AND
-          government_institute.institute_status = 2
+          government_institute.institute_status = 1
     			ORDER BY ST_Distance(police.location,given_point) 
     			LIMIT 1);
 		initial_radius := initial_radius + 10000 ;
@@ -414,7 +414,7 @@ BEGIN
     			FROM firestation,government_institute   
     			WHERE ST_DWithin(firestation.location,given_point,initial_radius) AND
 				firestation.institute_id = government_institute.institute_id AND
-				government_institute.institute_status = 2
+				government_institute.institute_status = 1
     			ORDER BY ST_Distance(firestation.location,given_point) 
     			LIMIT 1);
 		initial_radius := initial_radius + 10000 ;
