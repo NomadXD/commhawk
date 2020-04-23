@@ -31,6 +31,19 @@ const getBroadcastChannel = (io) => {
       socket.on("disconnect",function(){
         rethinkDB.removeSocket(socket.id);
       });
+
+      socket.on("forward",function(data){
+        rethinkDB.forwardIncident(data.report_id,data.forward_id,data.log);
+      });
+
+      socket.on("status",function(data){
+        rethinkDB.updateStatus(data.report_id,data.status,data.log);
+
+      });
+
+      socket.on("log",function(data){
+        rethinkDB.updateLog(data.report_id,data.log);
+      });
       
     });
   
