@@ -30,4 +30,7 @@ router.get("/create-document/:id",socketController.createTableController);
 router.get("/broadcast",socketController.dispatchBroadcast);
 
 
+router.get("/watch",socketController.watchChangesController);
+
+
 module.exports = router;
