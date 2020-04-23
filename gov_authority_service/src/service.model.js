@@ -93,6 +93,9 @@ const getRelatedInsitute = async (location,categories) => {
             result.rows[0]['displayName'] = "Police station - "+ result.rows[0].city
             result.rows[0]['instituteType'] = 1
             institutes.push(result.rows[0])
+
+            const policeHQ = {"institute_id":"b13b39b0-ef43-4df8-932f-6a1a79e1109d","displayName":"Police HQ","institute_type":7}
+            institutes.push(policeHQ)
     
         }else if(category === SERVICE_ENUM.INSTITUTE_TYPES.Hospital){
 
@@ -102,6 +105,9 @@ const getRelatedInsitute = async (location,categories) => {
             result.rows[0]['displayName'] = result.rows[0].hospital_type+" - "+result.rows[0].city
             result.rows[0]['instituteType'] = 2
             institutes.push(result.rows[0])
+
+            const hospitalHQ = {"institute_id":"ade39ee6-ed99-4002-a655-35308d460f97","displayName":"Hospital HQ","institute_type":8}
+            institutes.push(hospitalHQ)
         
         }else if (category === SERVICE_ENUM.INSTITUTE_TYPES.Fire_station){
 
@@ -111,6 +117,9 @@ const getRelatedInsitute = async (location,categories) => {
             result.rows[0]['displayName'] = "Fire station - "+ result.rows[0].city
             result.rows[0]['instituteType'] = 4
             institutes.push(result.rows[0])
+
+            const firestationHQ = {"institute_id":"2db8c542-18c8-465a-8d74-46e8338f4e43","displayName":"Firestation HQ","institute_type":9}
+            institutes.push(firestationHQ)
             
         }else if (category === SERVICE_ENUM.INSTITUTE_TYPES.Weather_center){
 
@@ -131,4 +140,47 @@ const getRelatedInsitute = async (location,categories) => {
     return institutes;
 }
 
-module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute}
+const getAll = async () => {
+    const queryString = `SELECT
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT p.institute_id, p.city
+                                FROM police p 
+                            ) sq
+                            ) AS police,
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT h.institute_id, h.hospital_category, h.city 
+                                FROM hospital h
+                            ) sq
+                            ) AS hospital,
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT f.institute_id, f.city 
+                                FROM firestation f
+                            ) sq
+                            ) AS fire_station,
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT g.institute_id 
+                                FROM government_institute g
+                                WHERE institute_type = 3
+
+                            ) sq
+                            ) AS weather_center,
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT g.institute_id, i.province
+                                FROM government_institute g, institute_location i
+                                WHERE g.institute_type = 5 and g.institute_id = i.institute_id 
+                            ) sq
+                            ) AS provincial_council,
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT g.institute_id
+                                FROM government_institute g
+                                WHERE g.institute_type = 6 
+                            ) sq
+                            ) AS social_service
+                            `
+
+    const result = await pool.query(queryString)
+    return result.rows[0]
+                    
+}
+
+module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll}

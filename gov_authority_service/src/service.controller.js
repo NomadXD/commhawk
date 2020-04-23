@@ -60,10 +60,12 @@ const signInController = async (req,res) => {
             let isPasswordValid = bcrypt.compareSync(password,data["password"])
             if(isPasswordValid){
                 let token = jwt.sign({"id":id,"type":data["institute_type"],"status":data["institute_status"]},"secret")
+                // TODO fetch incidents
                 res.status(200).send({
                     "status": 200,
                     "message": "Login success",
                     "account_status":data["institute_status"],
+                    "type":data["institute_type"],
                     "token": token
                 })
             }else{
@@ -114,5 +116,12 @@ const autoAssignInstituteController = async (req,res) => {
 
 }
 
+const getAllInstituteController = async (req,res) => {
+    const institutes = await govModel.getAll()
+    res.status(200).send({
+        "institutes": institutes
+    })
+}
 
-module.exports = {signUpController, signInController, autoAssignInstituteController}
+
+module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController}
