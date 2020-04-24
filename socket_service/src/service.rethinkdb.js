@@ -345,5 +345,39 @@ const updateLog = async (reportId,log) => {
 };
 
 
-module.exports = {initiateRealTimeDB,saveSocketID,removeSocket,createIncidentDoc,dispatchIncident,createReportDoc,watchChanges ,forwardIncident,updateStatus,updateLog};
+const getIncidents = async (instituteId,res) => {
+    let reports = [];
+    r.connect({ host: "rethinkdb", port: 28015 }, async function (err, conn) {
+            r.db("commhawk").table(instituteId).getField("reports").run(conn,async function(err,cursor){
+                if (err) throw err;
+                cursor.each(async function(err,result){
+                    if (err) throw err;
+                    for await (let report of result){
+                        console.log(report.id);
+                        await r.db("commhawk").table(report.id).run(conn,async function(err,cursor){
+                            if (err) return err;
+                            cursor.each(function(err,result){
+                                if (err) return err;
+                                reports.push(result);
+                            });
+                        });
+                    }
+                    console.log(reports);
+                    res.status(200).send({
+                        "status":200,
+                        "reports": reports 
+                    });
+                    
+    
+                });
+                
+            });
+           
+        
+        
+    });
+};
+
+
+module.exports = {initiateRealTimeDB,saveSocketID,removeSocket,createIncidentDoc,dispatchIncident,createReportDoc,watchChanges ,forwardIncident,updateStatus,updateLog, getIncidents};
 
