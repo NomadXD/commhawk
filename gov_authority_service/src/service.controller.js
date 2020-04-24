@@ -55,19 +55,33 @@ const signInController = async (req,res) => {
     let params = [id]
     try{
         let data = await govModel.getLoginInformation(params)
-        console.log(data)
         if(data){
             let isPasswordValid = bcrypt.compareSync(password,data["password"])
             if(isPasswordValid){
                 let token = jwt.sign({"id":id,"type":data["institute_type"],"status":data["institute_status"]},"secret")
                 // TODO fetch incidents
-                res.status(200).send({
-                    "status": 200,
-                    "message": "Login success",
-                    "account_status":data["institute_status"],
-                    "type":data["institute_type"],
-                    "token": token
-                })
+                if(data["institute_status"] === 2){
+                    const documentResponse = await fetch(`http://socket:3000/api/socket/get-incidents/${id}`).then(res => res.json())
+                    console.log(documentResponse)
+                    res.status(200).send({
+                        "status": 200,
+                        "message": "Login success",
+                        "account_status":data["institute_status"],
+                        "type":data["institute_type"],
+                        "token": token,
+                        "incidents": documentResponse
+                    })
+                }else{
+                    res.status(200).send({
+                        "status": 200,
+                        "message": "Login success",
+                        "account_status":data["institute_status"],
+                        "type":data["institute_type"],
+                        "token": token
+                    })
+
+                }
+                
             }else{
                 res.status(401).send({
                     "status":401,
@@ -123,5 +137,22 @@ const getAllInstituteController = async (req,res) => {
     })
 }
 
+const getInstituteInfoController = async (req,res) => {
+    const instituteInfo = await govModel.getInstituteInfo(req.body.id,req.body.category)
+    instituteInfo.st_asgeojson = JSON.parse(instituteInfo.st_asgeojson)
+    if(instituteInfo){
+        res.status(200).send({
+            "status":200,
+            "instituteInfo":instituteInfo
+        })
+    }else{
+        res.status(500).send({
+            "status":500,
+            "message":"No institute matches the given ID"
+        })
+    }
 
-module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController}
+}
+
+
+module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, getInstituteInfoController}
