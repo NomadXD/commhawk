@@ -59,17 +59,17 @@ const createGovInsititute = async (params) => {
 
 }
 
-const getInstituteInfo = async (params) => {
-    const queryString = ` SELECT government_institute.institute_id, government_institute.institute_type, government_institute.institute_status,
-                            institute_credentials.password from government_institute, institute_location, institute_credentials where 
-                            (government_institute.institute_id = institute_location.institute_id) and 
-                            (government_institute.institute_id = institute_credentials.institute_id) and
-                            (institute_location.institute_type = $1) and (institute_location.city = $2) 
-                        `
-    const values = [params[0],params[1]]
-    let result =  await pool.query(queryString,values)
-    return result.rows[0]
-}
+// const getInstituteInfo = async (params) => {
+//     const queryString = ` SELECT government_institute.institute_id, government_institute.institute_type, government_institute.institute_status,
+//                             institute_credentials.password from government_institute, institute_location, institute_credentials where 
+//                             (government_institute.institute_id = institute_location.institute_id) and 
+//                             (government_institute.institute_id = institute_credentials.institute_id) and
+//                             (institute_location.institute_type = $1) and (institute_location.city = $2) 
+//                         `
+//     const values = [params[0],params[1]]
+//     let result =  await pool.query(queryString,values)
+//     return result.rows[0]
+// }
 
 const getLoginInformation = async (params) => {
     const queryString = `SELECT government_institute.institute_status, institute_credentials.password, government_institute.institute_type 
@@ -181,6 +181,44 @@ const getAll = async () => {
     const result = await pool.query(queryString)
     return result.rows[0]
                     
+}
+
+const getInstituteInfo = async (instituteId,category) => {
+    let queryString;
+    if(category === SERVICE_ENUM.INSTITUTE_TYPES.Police_station){
+
+        queryString = `SELECT p.institute_id, p.addr_line_1, p.addr_line_2, p.city, p.district, p.province, ST_AsGeoJSON(p.location),
+                            c.station_category, p.motor_vehicles, p.motor_biycles, p.officers, p.weapons, p.cells, i.email, i.phone_number, i.fax 
+                            from police p, police_station_category c, institute_contact_info i
+                            where (p.institute_id = $1) and (p.station_category = c.station_category_id) and (p.institute_id = i.institute_id)`
+
+    }else if (category === SERVICE_ENUM.INSTITUTE_TYPES.Hospital){
+
+        queryString = `SELECT h.institute_id, h.addr_line_1, h.addr_line_2, h.city, h.district, h.province, ST_AsGeoJSON(h.location), c.hospital_category,
+                            h.icu_beds, h.doctors, h.ambulances, h.capacity, i.email, i.phone_number, i.fax   
+                            from hospital h, hospital_category c, institute_contact_info i
+                            where (h.hospital_category = c.hospital_category_code) and h.institute_id = $1 and (h.institute_id = i.institute_id)`
+       
+    }else if(category === SERVICE_ENUM.INSTITUTE_TYPES.Fire_station){
+
+        queryString = `SELECT f.institute_id, f.addr_line_1, f.addr_line_2, f.city, f.district, f.province, ST_AsGeoJSON(f.location), f.fire_trucks,
+                            f.fire_fighters, i.email, i.phone_number, i.fax  from firestation f, institute_contact_info i where f.institute_id = $1 and
+                            (f.institute_id = i.institute_id)`
+
+        
+    }else{
+
+        queryString = `SELECT l.addr_line_1, l.addr_line_2, l.city, l.district, l.province, ST_AsGeoJSON(l.location), c.email, c.phone_number,
+                            c.fax from institute_location l, institute_contact_info c
+                            where (l.institute_id = c.institute_id) and l.institute_id = $1`
+
+    }
+
+    const values = [instituteId]
+    const result = await pool.query(queryString,values)
+    return result.rows[0]
+
+
 }
 
 module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll}
