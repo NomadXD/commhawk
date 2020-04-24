@@ -24,8 +24,9 @@ const signUpController = async (req,res) => {
                 const token = jwt.sign({"id":id,"type":req.body.type,"status":1},"secret")
                 res.status(201).send({
                     "message": "Success",
+                    "id":id,
                     "token": token,
-                    "displayName": isRegistered
+                    "displayName": isRegistered,
                 })
             }else{
                 // TODO remove already saved account to achieve data consistency
