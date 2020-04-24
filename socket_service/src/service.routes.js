@@ -32,5 +32,7 @@ router.get("/broadcast",socketController.dispatchBroadcast);
 
 router.get("/watch",socketController.watchChangesController);
 
+router.get("/get-incidents/:id",socketController.getIncidentController);
+
 
 module.exports = router;

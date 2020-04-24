@@ -17,11 +17,16 @@ apiEndpoints:
       - '/api/user/delete'
       - '/api/user/:userId'
     methods: ["GET","POST","PUT","DELETE"]
-  gov:
+  gov_no_auth:
     host: '*'
     paths:
       - '/api/gov/signup'
       - '/api/gov/signin'
+  gov_auth:
+    host: '*'
+    paths:
+      - '/api/gov/get-all'
+      - '/api/gov/get-institute-info'
   socket:
     host: '*'
     paths:
@@ -33,6 +38,8 @@ serviceEndpoints:
     url: 'http://uds:3000'
   socketService:
     url: 'htpp://socket:3000'
+  govNoAuthService:
+    url: 'http://gov_auth:3000'
   govAuthService:
     url: 'http://gov_auth:3000'
 policies:
@@ -88,9 +95,27 @@ pipelines:
   
   gov_auth:
     apiEndpoints:
-      - gov
+      - gov_auth
     policies:
+      - jwt:
+        - action:
+            secretOrPublicKey: 'secret'
+            checkCredentialExistence: false
+      - request-transformer:
+        - action:
+            body:
+              add:
+                token: req.user
       - proxy:
         - action:
             serviceEndpoint: govAuthService
+  
+  gov_no_auth:
+    apiEndpoints:
+      - gov_no_auth
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: govNoAuthService
+
       

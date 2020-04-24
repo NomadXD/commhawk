@@ -7,6 +7,9 @@ INSERT INTO Institute_type values ('Weather Center',3);
 INSERT INTO Institute_type values ('Fire Station',4);
 INSERT INTO Institute_type values ('Provincial Council',5);
 INSERT INTO Institute_type values ('Social Service Office',6);
+INSERT INTO Institute_type values ('Police HQ',7);
+INSERT INTO Institute_type values ('Hospital HQ',8);
+INSERT INTO Institute_type values ('Firestation HQ',9);
 
 INSERT INTO Province values ('Western Province','WP');
 INSERT INTO Province values ('North Central Province','NC');
