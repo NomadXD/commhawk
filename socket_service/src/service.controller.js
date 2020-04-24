@@ -32,23 +32,21 @@ const messengeSenderController = async (req,res) => {
     const govDataJSON = await govDataResponse.json();
     const userDataJSON = await userDataResponse.json();
 
-    // create report document
+    if(userDataJSON.userdata.user_id){
+        await rethinkDB.createReportDoc(govDataJSON.institutes,userDataJSON.userdata,{"id":uuid()},req.broadcastChannel);
+        let institutes = govDataJSON.institutes;
+        res.status(200).send({
+            "status":200,
+            "message":"Success",
+            "institutes":institutes
+        });
 
-
-    rethinkDB.createReportDoc(govDataJSON.institutes,userDataJSON.userdata,{"id":uuid()},req.broadcastChannel);
-  
-
-    
-
-    res.json({
-        "message":"Success",
-        "data": userDataJSON,
-        "gov": govDataJSON
-    });
-
-
-
-
+    }else{
+        res.status(500).send({
+            "status":500,
+            "message": "User account not found"
+        });
+    }
 
 };
 
@@ -82,5 +80,11 @@ const watchChangesController = async (req,res) => {
     });
 };
 
+const getIncidentController = async (req,res) => {
+    const instituteId = req.params.id;
+    rethinkDB.getIncidents(instituteId,res);
+   
+};
 
-module.exports = {dispatchBroadcast, messengeSenderController, createTableController, watchChangesController};
+
+module.exports = {dispatchBroadcast, messengeSenderController, createTableController, watchChangesController , getIncidentController};
