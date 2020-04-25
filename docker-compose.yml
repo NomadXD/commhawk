@@ -58,6 +58,7 @@ services:
       - "3003:3000"
     depends_on: 
       - rethinkdb
+      - gov_authority_service
     volumes: 
       - ./socket_service:/src
 
