@@ -69,6 +69,7 @@ services:
     depends_on:
       - user_data_service
       - socket_service
+      - gov_authority_service
     volumes: 
       - ./api_gateway/gateway.config.yml:/var/lib/eg/gateway.config.yml 
     

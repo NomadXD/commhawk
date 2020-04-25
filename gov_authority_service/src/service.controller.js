@@ -7,26 +7,8 @@ const pool =  require("./service.database")
 
 const signUpController = async (req,res) => {
 
-    try{
-        pool.connect((err, client, release) => {
-            if (err) {
-              console.log('Error acquiring client', err.stack)
-            }
-            client.query('SELECT NOW()', (err, result) => {
-              release()
-              if (err) {
-                console.log('Error executing query', err.stack)
-              }
-              console.log(result.rows)
-            })
-          })
-
-    }catch(err){
-        console.log(err)
-    }
 
     // TODO backend validation
-    console.log("1 "+ req.body)
     const hashedPassword = bcrypt.hashSync(req.body.password,10);
 
     try{
