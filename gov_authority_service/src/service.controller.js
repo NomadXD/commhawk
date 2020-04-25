@@ -7,7 +7,7 @@ const fetch = require("node-fetch");
 const signUpController = async (req,res) => {
 
     // TODO backend validation
-
+    console.log("1 "+ req.body)
     const hashedPassword = bcrypt.hashSync(req.body.password,10);
 
     try{
@@ -16,7 +16,9 @@ const signUpController = async (req,res) => {
         params = req.body;
         params.id = id;
         params.hashedPassword = hashedPassword;
+        console.log("2")
         const isRegistered = await govModel.createGovInsititute(params)
+        console.log("3"+isRegistered)
         if(isRegistered){
             const documentResponse = await fetch(`http://socket:3000/api/socket/create-document/${id}`).then(res => res.json())
             console.log(documentResponse)

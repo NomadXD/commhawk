@@ -53,8 +53,9 @@ const createGovInsititute = async (params) => {
             displayName = "Provincial council || "+params.province
         }
     }
-
+    console.log("4"+relatedQueryString)
     await pool.query(relatedQueryString,values)
+    console.log("5"+displayName)
     return displayName
 
 }
