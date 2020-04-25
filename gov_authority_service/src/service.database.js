@@ -8,7 +8,9 @@ const pool = new Pool({
   port: "5432"
 });
 
-pool.query('SELECT NOW()')
+let result = await pool.query('SELECT NOW()')
+console.log(result)
+
 
 const client = new Client({
   user: "commhawk",
@@ -18,6 +20,7 @@ const client = new Client({
   port: "5432"
 })
 
-client.query('SELECT NOW()')
+let cresult = await client.query('SELECT NOW()')
+console.log(cresult)
 
 module.exports = pool;
