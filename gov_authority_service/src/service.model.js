@@ -54,7 +54,12 @@ const createGovInsititute = async (params) => {
         }
     }
     console.log("4"+relatedQueryString)
-    await pool.query(relatedQueryString,values)
+    try{
+        await pool.query(relatedQueryString,values)
+    }catch(err){
+        console.log(err)
+    }
+    
     console.log("5"+displayName)
     return displayName
 
