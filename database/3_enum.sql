@@ -33,3 +33,7 @@ insert into hospital_category values ('Special Category',5);
 insert into Police_station_category values ('District Level','A');
 insert into Police_station_category values ('City Level','B');
 insert into Police_station_category values ('Sub-urb Level','C');
+
+CALL createGovInstitute('b13b39b0-ef43-4df8-932f-6a1a79e1109d',7,'Police Headquarters','Colombo 07','Colombo','Colombo','WP',ST_SetSRID(ST_MakePoint(79.857203,6.933276),4326),'policehq@gov.lk','0112 694 999','0112 694 999','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q');
+CALL createGovInstitute('ade39ee6-ed99-4002-a655-35308d460f97',8,'Hospital Headquarters','Colombo 07','Colombo','Colombo','WP',ST_SetSRID(ST_MakePoint(79.865105,6.920291),4326),'hospitalhq@gov.lk','0112 456 999','0112 456 999','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q');
+CALL createGovInstitute('2db8c542-18c8-465a-8d74-46e8338f4e43',9,'Firestation Headquarters','Colombo 07','Colombo','Colombo','WP',ST_SetSRID(ST_MakePoint(79.857405,6.933222),4326),'firehq@gov.lk','0112 674 999','0112 674 999','$2b$10$KdbtEOKD6IXfxDi9eT4n1.xA2hQFRrl116HX53DshL/XdEhVR2X9q');

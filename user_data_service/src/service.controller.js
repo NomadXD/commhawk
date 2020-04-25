@@ -23,15 +23,17 @@ const signUpUserController = async (req,res) => {
 
             const token = jwt.sign({"id":id},"secret");
 
-            res.json({
+            res.status(200).send({
+                "status":200,
                 "message":"Success",
-                "token": token
+                "token":token,
+                "id":id
             });
         }
     }catch(err){
-        res.json({
-            "message":"Error",
-            "error":err
+        res.status(406).send({
+            "status":406,
+            "message":"Invalid details"
         });
     }    
 
@@ -42,25 +44,33 @@ const signInUserController = async (req,res) => {
     const {body: { nic, password }} = req;
     try {
         const result = await userModel.getUserPassword(nic);
-        const isPasswordValid = bcrypt.compareSync(password,result["password"]);
-        console.log(isPasswordValid);
-        if(isPasswordValid){
-            const token = jwt.sign({"id":result["user_id"]},"secret");
-            res.json({
-                "Message":"Success",
-                "token":token
-            });
+        if(result){
+            const isPasswordValid = bcrypt.compareSync(password,result["password"]);
+            if(isPasswordValid){
+                const token = jwt.sign({"id":result["user_id"]},"secret");
+                res.status(200).send({
+                    "status":200,
+                    "message":"Success",
+                    "token":token,
+                    "id":result["user_id"]
+                });
+            }else{
+                res.status(401).send({
+                    "status":401,
+                    "message":"Invalid password"
+                });
+            }
         }else{
-            res.json({
-                "Message":"Invalid login",
-
+            res.status(406).send({
+                "status":406,
+                "message":"Invalid NIC number"
             });
         }
+        
     } catch (error) {
-        res.json({
-            "Message": "Error",
-            "Error": error
-
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
         });
         
     }
@@ -92,11 +102,27 @@ const deleteUserController = async (req,res) => {
 
 const getUserController = async (req,res) => {
 
-    const data = await userModel.getUserDetails(req.params.userId);
+    try{
+        const data = await userModel.getUserDetails(req.params.userId);
+        if(data){
+            res.status(200).send({
+                "status":200,
+                "message":"Success",
+                "userdata": data
+            });
+        }else{
+            res.status(200).send({
+                "status":200,
+                "message":"User not found"
+            });
+        }
 
-   res.json({
-       "userdata": data
-   });
+    }catch (err){
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
+        });
+    }
 
 };
 

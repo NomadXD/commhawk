@@ -2,9 +2,9 @@
 const express = require("express");
 const router = express.Router();
 const socketController = require("./service.controller");
-const firestore  = require("./service.firestore");
-const admin = require("firebase-admin");
-const rethinkDB = require("./service.rethinkdb");
+// const firestore  = require("./service.firestore");
+// const admin = require("firebase-admin");
+// const rethinkDB = require("./service.rethinkdb");
 
 
 router.get("/test",async (req,res)=> {

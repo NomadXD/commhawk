@@ -27,21 +27,28 @@ const signUpController = async (req,res) => {
                     "id":id,
                     "token": token,
                     "displayName": isRegistered,
+                    "type":req.body.type
                 })
             }else{
                 // TODO remove already saved account to achieve data consistency
                 res.status(500).send({
+                    "status":500,
                     "message": "Internal Server Error",
                 })
 
             }
             
+        }else{
+            res.status(406).send({
+                "status":406,
+                "message": "Not accepted"
+            })
         }
     }catch (err){
         console.log(err)
         res.status(500).send({
-            "message": "Error",
-            "error": err
+            "status":500,
+            "message": "Internal Server Error"
         })
     }
 }
@@ -136,21 +143,23 @@ const autoAssignInstituteController = async (req,res) => {
 const getAllInstituteController = async (req,res) => {
     const institutes = await govModel.getAll()
     res.status(200).send({
+        "status":200,
+        "message":"Success",
         "institutes": institutes
     })
 }
 
 const getInstituteInfoController = async (req,res) => {
     const instituteInfo = await govModel.getInstituteInfo(req.body.id,req.body.category)
-    instituteInfo.st_asgeojson = JSON.parse(instituteInfo.st_asgeojson)
     if(instituteInfo){
+        instituteInfo.st_asgeojson = JSON.parse(instituteInfo.st_asgeojson)
         res.status(200).send({
             "status":200,
             "instituteInfo":instituteInfo
         })
     }else{
-        res.status(500).send({
-            "status":500,
+        res.status(404).send({
+            "status":404,
             "message":"No institute matches the given ID"
         })
     }
