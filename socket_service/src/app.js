@@ -18,7 +18,7 @@ const broadcastChannel = socketConnection.getBroadcastChannel(io);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-rethinkDB.initiateRealTimeDB();
+rethinkDB.initiateRealTimeDB(broadcastChannel);
 
 app.use(function(req,res,next){
   req.broadcastChannel = broadcastChannel;

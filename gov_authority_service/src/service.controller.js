@@ -45,7 +45,6 @@ const signUpController = async (req,res) => {
             })
         }
     }catch (err){
-        console.log(err)
         res.status(500).send({
             "status":500,
             "message": "Internal Server Error"

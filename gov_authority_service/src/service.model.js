@@ -175,7 +175,25 @@ const getAll = async () => {
                                 FROM government_institute g
                                 WHERE g.institute_type = 6 
                             ) sq
-                            ) AS social_service
+                            ) AS social_service,
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT g.institute_id
+                                FROM government_institute g
+                                WHERE g.institute_type = 7 
+                            ) sq
+                            ) AS police_HQ,
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT g.institute_id
+                                FROM government_institute g
+                                WHERE g.institute_type = 8 
+                            ) sq
+                            ) AS hospital_HQ,
+                            (SELECT json_agg(sq.*)
+                            FROM (SELECT g.institute_id
+                                FROM government_institute g
+                                WHERE g.institute_type = 9 
+                            ) sq
+                            ) AS weather_HQ
                             `
 
     const result = await pool.query(queryString)

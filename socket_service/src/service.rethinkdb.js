@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 const r = require("rethinkdb");
 
-const initiateRealTimeDB = async () => {
+const initiateRealTimeDB = async (broadCastChannel) => {
     r.connect({ host: "rethinkdb", port: 28015 }, function (err, conn) {
       r.dbList()
         .contains("commhawk")
@@ -20,6 +20,18 @@ const initiateRealTimeDB = async () => {
                     if (err) throw err;
                     console.log(res);
                 });
+
+                // r.db("commhawk").tableCreate("b13b39b0-ef43-4df8-932f-6a1a79e1109d").run(conn);
+                // r.db("commhawk").tableCreate("ade39ee6-ed99-4002-a655-35308d460f97").run(conn);
+                // r.db("commhawk").tableCreate("2db8c542-18c8-465a-8d74-46e8338f4e43").run(conn);
+                // r.db("commhawk").tableCreate("f274bdd4-8213-4b23-8fcb-994af0cd094d").run(conn);
+                // r.db("commhawk").tableCreate("b17db592-6c65-4ec7-b5bc-e1b2483eeacf").run(conn);
+
+                createIncidentDoc("b13b39b0-ef43-4df8-932f-6a1a79e1109d",broadCastChannel);
+                createIncidentDoc("ade39ee6-ed99-4002-a655-35308d460f97",broadCastChannel);
+                createIncidentDoc("2db8c542-18c8-465a-8d74-46e8338f4e43",broadCastChannel);
+                createIncidentDoc("f274bdd4-8213-4b23-8fcb-994af0cd094d",broadCastChannel);
+                createIncidentDoc("b17db592-6c65-4ec7-b5bc-e1b2483eeacf",broadCastChannel);
             }
         });
     });
@@ -198,9 +210,10 @@ const watchChanges = async (broadCastChannel) => {
                     if(result[0]){
                         console.log("Institute: " +result[0].institute_id);
                         let instituteId = result[0].institute_id;
-                        return r.db("commhawk").table(result[0].institute_id).changes().run(conn,function(err,cursor){
+                        return r.db("commhawk").table(result[0].institute_id).getField("reports").changes().run(conn,function(err,cursor){
                             cursor.each(function(err, row) {
                                 if (err) throw err; 
+                                console.log(row.new_val);
                                 let reportId = row.new_val.filter(x => ! row.old_val.includes(x));
                                 r.db("commhawk").table(reportId[0].id).run(conn,function(err,cursor){
                                     if (err) throw err;

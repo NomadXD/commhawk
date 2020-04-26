@@ -1,5 +1,4 @@
 const rethinkDB = require("./service.rethinkdb");
-//const uuid = require("uuid/v4");
 const fetch = require("node-fetch");
 const uuid = require("uuid/v4");
 
@@ -18,6 +17,13 @@ const messengeSenderController = async (req,res) => {
 
     const body = req.body;
 
+    // if(req.body.location || req.body.categories){
+    //     res.status(406).send({
+    //         "status":406,
+    //         "message":"Not acceptable. Location or categories missing"
+    //     });
+    // }
+
     const govDataPromise = fetch("http://gov_auth:3000/api/gov/get-related-institutes",{
                                         method: "post",
                                         body:    JSON.stringify(body),
@@ -32,7 +38,7 @@ const messengeSenderController = async (req,res) => {
     const govDataJSON = await govDataResponse.json();
     const userDataJSON = await userDataResponse.json();
 
-    if(userDataJSON.userdata.user_id){
+    if(userDataJSON.userdata){
         await rethinkDB.createReportDoc(govDataJSON.institutes,userDataJSON.userdata,{"id":uuid()},req.broadcastChannel);
         let institutes = govDataJSON.institutes;
         res.status(200).send({
@@ -61,7 +67,7 @@ const createTableController = async (req,res) => {
     }catch(err){
         res.json({
             "status":500,
-            "result" : "Document craetion failed!"
+            "result" : "Document creation failed!"
         });
     }
 
@@ -74,10 +80,21 @@ const createTableController = async (req,res) => {
 
 
 const watchChangesController = async (req,res) => {
-    rethinkDB.watchChanges(req.broadcastChannel);
-    res.json({
-        "true":"True"
-    });
+    try{
+        await rethinkDB.watchChanges(req.broadcastChannel);
+        res.status(200).send({
+            "message":"Attached listners"
+        });
+    }catch(err){
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error",
+            "error":err
+        });
+
+    }
+    
+   
 };
 
 const getIncidentController = async (req,res) => {
