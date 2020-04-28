@@ -22,10 +22,10 @@ apiEndpoints:
     paths:
       - '/api/gov/signup'
       - '/api/gov/signin'
+      - '/api/gov/get-all'
   gov_auth:
     host: '*'
     paths:
-      - '/api/gov/get-all'
       - '/api/gov/get-institute-info'
   socket:
     host: '*'
