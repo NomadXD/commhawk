@@ -27,6 +27,7 @@ apiEndpoints:
     host: '*'
     paths:
       - '/api/gov/get-institute-info'
+      - '/api/gov/hq/get-unverified'
   socket:
     host: '*'
     paths:
