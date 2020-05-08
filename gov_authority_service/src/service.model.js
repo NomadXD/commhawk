@@ -239,4 +239,25 @@ const getInstituteInfo = async (instituteId,category) => {
 
 }
 
-module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll}
+const getUnverifiedInstitutes = async (hq_type) => {
+    let queryString;
+    if (SERVICE_ENUM.INSTITUTE_TYPES.Police_HQ === hq_type){
+        queryString = `SELECT p.institute_id, p.addr_line_1, p.addr_line_2, p.city, p.district, p.province, 
+                        pc.station_category,p.motor_vehicles,p.motor_biycles,p.officers,p.weapons, p.cells from police p, 
+                        government_institute g, police_station_category pc where g.institute_status = 1 and pc.station_category_id = p.station_category
+                        and g.institute_id = p.institute_id`
+    }else if (SERVICE_ENUM.INSTITUTE_TYPES.Hospital_HQ === hq_type){
+        queryString = `SELECT h.institute_id, h.addr_line_1, h.addr_line_2, h.city, h.district, h.province, hc.hospital_category, h.icu_beds, h.doctors,
+                        h.ambulances, h.capacity from hospital h, government_institute g, hospital_category hc where g.institute_status = 1 and
+                        hc.hospital_category_code = h.hospital_category and g.institute_id = h.institute_id`
+    }else if (SERVICE_ENUM.INSTITUTE_TYPES.Firestation_HQ === hq_type){
+        queryString = `SELECT f.institute_id, f.addr_line_1, f.addr_line_2, f.city, f.district, f.province, f.fire_trucks, f.fire_fighters from firestation f,
+                        government_institute g where g.institute_status = 1 and g.institute_id = f.institute_id`
+    }
+    const result = await pool.query(queryString)
+    return result.rows
+
+
+}
+
+module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, getUnverifiedInstitutes}

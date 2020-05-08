@@ -165,5 +165,16 @@ const getInstituteInfoController = async (req,res) => {
 
 }
 
+const getUnverifiedController = async (req,res) => {
 
-module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, getInstituteInfoController}
+    const type = req.body.token.type
+    const institutes = await govModel.getUnverifiedInstitutes(type);
+    res.status(200).send({
+        "status":200,
+        "institutes":institutes
+    })
+
+}
+
+
+module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, getInstituteInfoController, getUnverifiedController}
