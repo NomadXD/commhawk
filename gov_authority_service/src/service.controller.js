@@ -176,5 +176,24 @@ const getUnverifiedController = async (req,res) => {
 
 }
 
+const verifyHQController = async (req,res) => {
 
-module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, getInstituteInfoController, getUnverifiedController}
+    const instituteId = req.params.instituteId;
+    const isVerified = await govModel.verifyInstitute(instituteId);
+    if(isVerified){
+        res.status(200).send({
+            "status":200,
+            "message":"Successfully verified"
+        })
+    }else{
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
+        })
+    }
+
+
+}
+
+
+module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, getInstituteInfoController, getUnverifiedController,verifyHQController}
