@@ -28,6 +28,7 @@ apiEndpoints:
     paths:
       - '/api/gov/get-institute-info'
       - '/api/gov/hq/get-unverified'
+      - '/api/gov/hq/verify/:instituteId'
   socket:
     host: '*'
     paths:

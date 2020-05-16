@@ -260,4 +260,15 @@ const getUnverifiedInstitutes = async (hq_type) => {
 
 }
 
-module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, getUnverifiedInstitutes}
+const verifyInstitute = async (instituteId) => {
+
+    // TODO check for account types (police HQ => police only)
+
+    const queryString = `UPDATE government_institute SET institute_status = 2 where institute_id = $1`
+    const values = [instituteId]
+    await pool.query(queryString, values)
+    return true
+
+}
+
+module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, getUnverifiedInstitutes, verifyInstitute}
