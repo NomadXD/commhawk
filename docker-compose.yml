@@ -47,9 +47,18 @@ services:
     environment:
       DATABASE_URL: postgres://commhawk:password@postgres:5432/gov_auth
     volumes:
-      - ./gov_authority_service:/src 
-
-
+      - ./gov_authority_service:/src
+      
+  push_notification_service:
+    build: './push_notification_service'
+    container_name: push
+    ports:
+      - "3005:3000"
+    depends_on: 
+      - user_data_service
+      - gov_authority_service
+    volumes: 
+      - ./push_notification_service:/src  
 
   socket_service:
     build: './socket_service'
