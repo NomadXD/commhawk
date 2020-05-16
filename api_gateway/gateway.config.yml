@@ -9,7 +9,6 @@ apiEndpoints:
     paths: 
       - '/api/user/signup'
       - '/api/user/signin'
-      - '/api/user/api-docs'
     methods: ["POST"]
   user:
     host: '*'

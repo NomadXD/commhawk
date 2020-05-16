@@ -13,20 +13,21 @@ app.use("/api/user",userRouter);
 const swaggerOptions = {
     swaggerDefinition: {
       info: {
+        openapi: "3.0.1",
         title: "User API",
         description: "User API Information",
         contact: {
-          name: "Amazing Developer"
-        },
-        servers: ["http://localhost:3000"]
-      }
+          name: "Commhawk"
+        }
+      },
+      
     },
     // ['.routes/*.js']
-    apis: ["service.routes.js"]
+    apis: ["src/service.routes.js"]
   };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/api/user/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
 module.exports = app;
