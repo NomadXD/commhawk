@@ -130,13 +130,27 @@ const createReportDoc = async (institutes,user,report,broadCastChannel) => {
                         let id = row.new_val.forwarded.filter(x => ! row.old_val.forwarded.includes(x));
                         // id[0] is taken because only 1 change can happen at a time.
                             console.log("Inside forward if");
-
+                            console.log(row.new_val);
                             r.db("commhawk").table(id[0]).update({
                                 "reports": r.row("reports").append({"id":report.id,"timestamp": r.epochTime(timestamp/1000.0)})
                                 
-                            }).run(conn);
+                            }).run(conn,function(err,res){
+                                if (err) throw err;
+                                r.db("commhawk").table(report.id).pluck("ids").run(conn,function(err,cursor){
+                                    cursor.toArray(function(err,result){
+                                        console.log(result[0]);
+                                         result[0].ids.forEach(_id => {
+                                             console.log("Dispatching forward to: "+id);
+                                             dispatchIncident(_id,broadCastChannel,{"report_id":report.id,"forward":id[0]},"Forward");
+                                         });
+                                       
+        
+                                    });
+        
+                                 });
+                            });
                             institute_ids.push(id[0]);
-                            console.log(institute_ids);
+                            
 
                 
 
@@ -259,8 +273,23 @@ const watchChanges = async (broadCastChannel) => {
                                             r.db("commhawk").table(id[0]).update({
                                                 "reports": r.row("reports").append({"id":result[0].report_id,"timestamp": r.epochTime(timestamp/1000.0)})
                                                 
-                                            }).run(conn);
+                                            }).run(conn,function(err,res){
+                                                if (err) throw err;
+                                                r.db("commhawk").table(result[0].report_id).pluck("ids").run(conn,function(err,cursor){
+                                                    cursor.toArray(function(err,result){
+                                                        console.log(result[0]);
+                                                        result[0].ids.forEach(_id => {
+                                                            console.log("Dispatching forward to: "+_id);
+                                                            dispatchIncident(_id,broadCastChannel,{"report_id":result[0].report_id,"forward":id[0]},"Forward");
+                                                        });
+                                       
+        
+                                                    });
+        
+                                                });
+                                            });
                                             institute_ids.push(id[0]);
+
 
                                     }else if (row.new_val.status != row.old_val.status){
                                         r.db("commhawk").table(result[0].report_id).pluck("ids").run(conn,function(err,cursor){
