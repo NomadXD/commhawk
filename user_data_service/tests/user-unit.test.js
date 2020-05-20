@@ -1,7 +1,11 @@
+/* eslint-disable quotes */
 //require("dotenv").config();
 const userModel = require("../src/service.model");
 const uuid = require("uuid/v4");
 const RandExp = require("randexp");
+
+
+
 
 /**
  *  Testing for successful user creation when the correct data format is provided
@@ -83,6 +87,84 @@ test("Testing the createuser function null feild",async ()=>{
     }  
     
 });
+
+/**
+ * Testing for correct returned object when a valid nic is given
+ */
+test("Testing the getUserPassword function with valid nic",async ()=>{
+    const nic = "853126878v";
+    const data = await userModel.getUserPassword(nic);
+    const expected = {"password": "$2b$10$jJSd1SNKJEATo2jG/.m77uggMVApA0pJEhQEaxnLfKnEaWeDUPWda", "user_id": "a86c46bc-abab-440d-91be-264ac9442361"};
+    expect(data).toEqual(expected);
+
+});
+
+/**
+ * Testing for the response when an invalid nic is given
+ */
+test("Testing the getUserPassword function with invalid nic",async ()=>{
+    const nic = "9745681831v";
+    const data = await userModel.getUserPassword(nic);
+    const expected = undefined;
+    expect(data).toEqual(expected);
+
+});
+
+/**
+ * Testing for the response when a null value is given as the nic
+ */
+test("Testing the getUserPassword function with null nic",async ()=>{
+    const nic = null;
+    const data = await userModel.getUserPassword(nic);
+    const expected = undefined;
+    expect(data).toEqual(expected);
+
+});
+
+/**
+ * Testing for valid response format when a valid id is given
+ */
+test("Testing the getUserDetails function with valid id",async ()=>{
+    const id = "a86c46bc-abab-440d-91be-264ac9442361";
+    const user = await userModel.getUserDetails(id);
+    user.dob = null;
+    const expected = {   user_id: 'a86c46bc-abab-440d-91be-264ac9442361',
+                         nic: '853126878v',
+                         first_name: 'Lahiru',
+                         last_name: 'Udayanga',
+                         dob: null,
+                         addr_line_1: '5B',
+                         addr_line_2: 'Polwatta road',
+                         city: 'Horana',
+                         email: 'lahiru@97gmail.com',
+                         telephone_number: '0775930399' };
+    expect(user).toEqual(expected);
+    
+});
+
+
+/**
+ *  Testing for return type when an invalid id is given
+ */
+test("Testing the getUserDetails function with an invalid id",async ()=>{
+    const id = "b13b39b0-ef43-4rt8-932f-6a1a79e1109d";
+    const user = await userModel.getUserDetails(id);
+    const expected = undefined;
+    expect(user).toEqual(expected);
+    
+});
+
+/**
+ *  Testing for return type when null is given as id
+ */
+test("Testing the getUserDetails function when null is given as id",async ()=>{
+    const id = null;
+    const user = await userModel.getUserDetails(id);
+    const expected = undefined;
+    expect(user).toEqual(expected);
+    
+});
+
 
 
 

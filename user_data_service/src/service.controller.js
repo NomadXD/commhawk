@@ -17,7 +17,6 @@ const signUpUserController = async (req,res) => {
 
     try{
         const id = uuid();
-        console.log(req.body);
         const success = await userModel.createUser(id,nic,firstName,lastName,dob,addressLine1,addressLine2,city,email,telephoneNumber,hashedPassword);
         
         if(success){

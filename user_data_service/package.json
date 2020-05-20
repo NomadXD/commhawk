@@ -4,7 +4,7 @@
   "description": "user data related services are included here",
   "main": "server.js",
   "scripts": {
-    "test": "jest --detectOpenHandles",
+    "test": "jest --coverage --detectOpenHandles",
     "dev": "nodemon -L server.js"
   },
   "author": "",
@@ -16,6 +16,7 @@
     "express": "^4.17.1",
     "jest": "^26.0.1",
     "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.0",
     "pg": "^8.0.0",
     "randexp": "^0.5.3",
     "swagger-jsdoc": "^4.0.0",
