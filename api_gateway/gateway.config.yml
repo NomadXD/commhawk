@@ -61,8 +61,8 @@ pipelines:
             origin: '*'
             credentials: true
             methods: GET,POST,PUT,DELETE,OPTIONS
-            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
-            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
+            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
+            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
             #exposedHeaders : ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Origin', 'Accept', 'X-Requested-With', 'Content-Type', 'Access-Control-Request-Method', 'Access-Control-Request-Headers','Authorization', 'Access-Control-Allow-Origin','X-TEST']
             preflightContinue: true
             optionsSuccessStatus: 204
@@ -80,8 +80,8 @@ pipelines:
             origin: '*'
             credentials: true
             methods: GET,POST,PUT,DELETE,OPTIONS
-            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
-            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
+            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
+            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
             #exposedHeaders : ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Origin', 'Accept', 'X-Requested-With', 'Content-Type', 'Access-Control-Request-Method', 'Access-Control-Request-Headers','Authorization', 'Access-Control-Allow-Origin','X-TEST']
             preflightContinue: true
             optionsSuccessStatus: 204
@@ -110,8 +110,8 @@ pipelines:
             origin: '*'
             credentials: true
             methods: GET,POST,PUT,DELETE,OPTIONS
-            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
-            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
+            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
+            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
             #exposedHeaders : ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Origin', 'Accept', 'X-Requested-With', 'Content-Type', 'Access-Control-Request-Method', 'Access-Control-Request-Headers','Authorization', 'Access-Control-Allow-Origin','X-TEST']
             preflightContinue: true
             optionsSuccessStatus: 204
@@ -138,8 +138,8 @@ pipelines:
             origin: '*'
             credentials: true
             methods: GET,POST,PUT,DELETE,OPTIONS
-            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
-            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
+            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
+            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
             #exposedHeaders : ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Origin', 'Accept', 'X-Requested-With', 'Content-Type', 'Access-Control-Request-Method', 'Access-Control-Request-Headers','Authorization', 'Access-Control-Allow-Origin','X-TEST']
             preflightContinue: true
             optionsSuccessStatus: 204
@@ -166,8 +166,8 @@ pipelines:
             origin: '*'
             credentials: true
             methods: GET,POST,PUT,DELETE,OPTIONS
-            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
-            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept']
+            allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
+            exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
             #exposedHeaders : ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Origin', 'Accept', 'X-Requested-With', 'Content-Type', 'Access-Control-Request-Method', 'Access-Control-Request-Headers','Authorization', 'Access-Control-Allow-Origin','X-TEST']
             preflightContinue: true
             optionsSuccessStatus: 204
