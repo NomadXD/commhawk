@@ -193,7 +193,7 @@ const getAll = async () => {
                                 FROM government_institute g
                                 WHERE g.institute_type = 9 
                             ) sq
-                            ) AS weather_HQ
+                            ) AS firestation_HQ
                             `;
 
     const result = await pool.query(queryString);
