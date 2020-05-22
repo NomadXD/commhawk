@@ -14,7 +14,7 @@ router.post("/test",async (req,res)=> {
     //   });
 
     // await rethinkDB.createIncidentDoc("13f77fe4-abee-4e00-8c5b-e2f0ab01e29b",req.broadcastChannel);
-    console.log("Here")
+    console.log("Here");
     socketController.testImageUpload(req,res);
     //await rethinkDB.insertIncident();
   

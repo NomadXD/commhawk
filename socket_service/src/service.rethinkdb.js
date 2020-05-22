@@ -70,8 +70,11 @@ const createIncidentDoc = async (instituteId,broadCastChannel) => {
                     if (err) throw err;
                     console.log(row);
                     console.log("Chnage captured to Institute table " +instituteId);
-                    let reportId = row.new_val.filter(x => ! row.old_val.includes(x));
-                    r.db("commhawk").table(reportId[0].id).run(conn,function(err,cursor){
+                    //let reportId = row.new_val.filter(x => ! row.old_val.includes(x));
+                    let reportId = row.new_val.pop();
+                    console.log(row);
+                    //console.log(reportId);
+                    r.db("commhawk").table(reportId.id).run(conn,function(err,cursor){
                         if (err) throw err;
                         cursor.toArray(function(err,result){
                             console.log(result);
@@ -97,6 +100,8 @@ const createReportDoc = async (institutes,user,report,broadCastChannel) => {
             if (err) throw err;
             // insert report and instittutes to auto assigned
             // set up listners
+            const date = new Date();
+            const timestamp = date.getTime();
             await r.db("commhawk").table(report.id).insert({
                 "report_id": report.id,
                 "user_details":user,
@@ -107,7 +112,8 @@ const createReportDoc = async (institutes,user,report,broadCastChannel) => {
                     "status":0,
                     "logs":[]
                 },
-                "report":report
+                "report":report,
+                "timestamp": r.epochTime(timestamp/1000.0)
                 
             }).run(conn);
 
@@ -122,8 +128,8 @@ const createReportDoc = async (institutes,user,report,broadCastChannel) => {
 
             return r.db("commhawk").table(report.id).getField("subscribed").changes().run(conn,function(err,cursor){
                 console.log("Change captured in forward");
-                const date = new Date();
-                const timestamp = date.getTime();
+                let date = new Date();
+                let timestamp = date.getTime();
                 cursor.each(function(err, row) {
                     if (err) throw err;
                     if(row.new_val.forwarded.length != row.old_val.forwarded.length){
@@ -131,6 +137,8 @@ const createReportDoc = async (institutes,user,report,broadCastChannel) => {
                         // id[0] is taken because only 1 change can happen at a time.
                             console.log("Inside forward if");
                             console.log(row.new_val);
+                            date = new Date();
+                            timestamp = date.getTime();
                             r.db("commhawk").table(id[0]).update({
                                 "reports": r.row("reports").append({"id":report.id,"timestamp": r.epochTime(timestamp/1000.0)})
                                 
@@ -227,9 +235,11 @@ const watchChanges = async (broadCastChannel) => {
                         return r.db("commhawk").table(result[0].institute_id).getField("reports").changes().run(conn,function(err,cursor){
                             cursor.each(function(err, row) {
                                 if (err) throw err; 
-                                console.log(row.new_val);
-                                let reportId = row.new_val.filter(x => ! row.old_val.includes(x));
-                                r.db("commhawk").table(reportId[0].id).run(conn,function(err,cursor){
+                                console.log(row);
+                                //let reportId = row.new_val.filter(x => ! row.old_val.includes(x));
+                                let reportId = row.new_val.pop();
+                                console.log(reportId);
+                                r.db("commhawk").table(reportId.id).run(conn,function(err,cursor){
                                     if (err) throw err;
                                     cursor.toArray(function(err,result){
                                         console.log(result);
@@ -260,8 +270,8 @@ const watchChanges = async (broadCastChannel) => {
                             });
                             
                             return r.db("commhawk").table(result[0].report_id).getField("subscribed").changes().run(conn,function(err,cursor){
-                                const date = new Date();
-                                const timestamp = date.getTime();
+                                let date = new Date();
+                                let timestamp = date.getTime();
                                 cursor.each(function(err, row) {
                                     if (err) throw err;
                                     console.log(row.new_val);
@@ -269,7 +279,7 @@ const watchChanges = async (broadCastChannel) => {
                                         let id = row.new_val.forwarded.filter(x => ! row.old_val.forwarded.includes(x));
                 
                                         // id[0] is taken because only 1 change can happen at a time.
-                
+                                            
                                             r.db("commhawk").table(id[0]).update({
                                                 "reports": r.row("reports").append({"id":result[0].report_id,"timestamp": r.epochTime(timestamp/1000.0)})
                                                 
@@ -278,6 +288,7 @@ const watchChanges = async (broadCastChannel) => {
                                                 r.db("commhawk").table(result[0].report_id).pluck("ids").run(conn,function(err,cursor){
                                                     cursor.toArray(function(err,result){
                                                         console.log(result[0]);
+                                                        
                                                         result[0].ids.forEach(_id => {
                                                             console.log("Dispatching forward to: "+_id);
                                                             dispatchIncident(_id,broadCastChannel,{"report_id":result[0].report_id,"forward":id[0]},"Forward");
@@ -294,6 +305,7 @@ const watchChanges = async (broadCastChannel) => {
                                     }else if (row.new_val.status != row.old_val.status){
                                         r.db("commhawk").table(result[0].report_id).pluck("ids").run(conn,function(err,cursor){
                                             let reportId = result[0].report_id;
+                                        
                                             cursor.toArray(function(err,result){
                                                 console.log(result[0]);
                                                  result[0].ids.forEach(id => {
@@ -311,6 +323,7 @@ const watchChanges = async (broadCastChannel) => {
                                         console.log("Dispatching new message");
                                         r.db("commhawk").table(result[0].report_id).pluck("ids").run(conn,function(err,cursor){
                                             let reportId = result[0].report_id;
+                                           
                                             cursor.toArray(function(err,result){
                                                 console.log(result[0]);
                                                  result[0].ids.forEach(id => {

@@ -14,7 +14,6 @@ const getUserPassword = async (nic) => {
     const queryString = "SELECT usercredential.user_id,usercredential.password from usercredential,userdetail where (usercredential.user_id = userdetail.user_id) and (userdetail.nic) = $1";
     const values = [nic];
     let result = await pool.query(queryString,values);
-    console.log(result.rows[0]);
     return result.rows[0];
 };
 
