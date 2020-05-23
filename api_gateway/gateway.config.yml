@@ -16,14 +16,14 @@ apiEndpoints:
       - '/api/user/update'
       - '/api/user/delete'
       - '/api/user/:userId'
-    methods: ["GET","POST","PUT","DELETE"]
+    methods: ["GET","POST","PUT","DELETE","OPTIONS"]
   gov_no_auth:
     host: '*'
     paths:
       - '/api/gov/signup'
       - '/api/gov/signin'
       - '/api/gov/get-all'
-    methods: ["GET","POST","PUT","DELETE"]
+    methods: ["GET","POST","PUT","DELETE","OPTIONS"]
   gov_auth:
     host: '*'
     paths:
@@ -36,7 +36,8 @@ apiEndpoints:
     paths:
       - '/api/socket/broadcast'
       - '/api/socket/test'
-      - '/api/socket/send-message' 
+      - '/api/socket/send-message'
+    methods: ["GET","POST","PUT","DELETE","OPTIONS"] 
 serviceEndpoints:
   noAuthService:
     url: 'http://uds:3000'
@@ -115,7 +116,7 @@ pipelines:
             allowedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
             exposedHeaders: ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Accept','Options']
             #exposedHeaders : ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Origin', 'Accept', 'X-Requested-With', 'Content-Type', 'Access-Control-Request-Method', 'Access-Control-Request-Headers','Authorization', 'Access-Control-Allow-Origin','X-TEST']
-            preflightContinue: true
+            preflightContinue: false
             optionsSuccessStatus: 204
             #maxAge: 600
       - jwt:
