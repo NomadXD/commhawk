@@ -9,7 +9,8 @@ apiEndpoints:
     paths: 
       - '/api/user/signup'
       - '/api/user/signin'
-    methods: ["POST"]
+      - '/api/user/check/:userId'
+    methods: ["POST","GET"]
   user:
     host: '*'
     paths:

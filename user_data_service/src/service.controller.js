@@ -79,7 +79,7 @@ const signInUserController = async (req,res) => {
 
 
 const updateUserController = async (req,res) => {
-    
+
     const {body: { addressLine1, addressLine2, city, email, telephoneNumber }} = req;
     const isUpdated = await userModel.updateUserDetails(addressLine1, addressLine2, city, email, telephoneNumber, req.body.user.id);
 
@@ -101,11 +101,18 @@ const updateUserController = async (req,res) => {
 
 const deleteUserController = async (req,res) => {
 
-    res.json({
-        "success":200,
-        "user":req.user,
-        "data":req.body
-    });
+   const isDeleted = await userModel.deleteUser(req.body.user.id);
+   if(isDeleted){
+       res.status(201).send({
+           "status":201,
+           "message":"User deleted successfully"
+       });
+   }else{
+       res.status(200).send({
+           "status": 200,
+           "message":"User deletion failed"
+       });
+   }
 
 };
 
@@ -136,7 +143,22 @@ const getUserController = async (req,res) => {
 
 };
 
+const checkUserExistenceController = async (req,res) => {
+    const userExist = await userModel.checkUserExistence(req.params.userId);
+    if (userExist){
+        res.status(201).send({
+            "status":201,
+            "message":"User exists"
+        });
+    }else{
+        res.status(200).send({
+            "status":200,
+            "message":"User does not exist"
+        });
+    }
+};
 
 
 
-module.exports = {signUpUserController,signInUserController,updateUserController,deleteUserController,getUserController};
+
+module.exports = {signUpUserController,signInUserController,updateUserController,deleteUserController,getUserController, checkUserExistenceController};

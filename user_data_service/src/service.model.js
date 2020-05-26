@@ -37,5 +37,19 @@ const updateUserDetails = async (addressLine1, addressLine2, city, email, teleph
     return true;
 };
 
+const deleteUser = async (userId) => {
+    const queryString = "DELETE from userdetail where user_id = $1";
+    const values = [userId];
+    await pool.query(queryString,values);
+    return true;
+};
 
-module.exports = {createUser,getUserPassword,getUserDetails, updateUserDetails};
+const checkUserExistence = async (userId) => {
+    const queryString = "SELECT user_id from userdetail where nic = $1";
+    const values = [userId];
+    const result = await pool.query(queryString, values);
+    return result.rows[0];
+};
+
+
+module.exports = {createUser,getUserPassword,getUserDetails, updateUserDetails, deleteUser, checkUserExistence};
