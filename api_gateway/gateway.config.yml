@@ -16,6 +16,7 @@ apiEndpoints:
       - '/api/user/update'
       - '/api/user/delete'
       - '/api/user/:userId'
+      - '/api/user/update'
     methods: ["GET","POST","PUT","DELETE","OPTIONS"]
   gov_no_auth:
     host: '*'

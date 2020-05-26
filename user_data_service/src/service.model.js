@@ -24,5 +24,18 @@ const getUserDetails = async (id) => {
     return result.rows[0];
 };
 
+const updateUserDetails = async (addressLine1, addressLine2, city, email, telephoneNumber, userId) => {
+    const queryString = `UPDATE userdetail SET
+                        addr_line_1 = $1,
+                        addr_line_2 = $2,
+                        city = $3,
+                        email = $4,
+                        telephone_number = $5
+                        where user_id = $6`;
+    const values = [addressLine1, addressLine2, city, email, telephoneNumber, userId];
+    await pool.query(queryString, values);
+    return true;
+};
 
-module.exports = {createUser,getUserPassword,getUserDetails};
+
+module.exports = {createUser,getUserPassword,getUserDetails, updateUserDetails};

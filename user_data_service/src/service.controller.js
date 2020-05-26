@@ -79,13 +79,23 @@ const signInUserController = async (req,res) => {
 
 
 const updateUserController = async (req,res) => {
+    
+    const {body: { addressLine1, addressLine2, city, email, telephoneNumber }} = req;
+    const isUpdated = await userModel.updateUserDetails(addressLine1, addressLine2, city, email, telephoneNumber, req.body.user.id);
 
-    console.log(req.body);
+    if(isUpdated){
+       res.status(200).send({
+           "status":200,
+           "message":"User details successfully updated"
+       });
+    }else{
+        res.status(200).send({
+            "status":200,
+            "message":"User details update unsuccessful. Try again later"
+        });
+    }
 
-    res.json({
-        "success":2000, 
-        "data":req.body.user
-    });
+    
 
 };
 
