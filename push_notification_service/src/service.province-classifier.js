@@ -22,6 +22,8 @@ const getCurrentProvince = async (lat,lng) => {
         province = "EP";
     }else if (provinceHashEnum.UP[geoHash]){
         province = "UP";
+    }else if (provinceHashEnum.CP[geoHash]){
+        province = "CP";
     }
 
     return province;
