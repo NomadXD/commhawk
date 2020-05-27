@@ -202,6 +202,11 @@ const updateInstituteLocationController = async (req, res) => {
             "status":201,
             "message":"Location details successfully updated"
         });
+    }else{
+        res.status(200).send({
+            "status": 200,
+            "message": "Location update failed"
+        });
     }
 };
 

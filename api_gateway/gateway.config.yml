@@ -98,8 +98,7 @@ pipelines:
       - jwt:
         - action:
             secretOrPublicKey: 'secret'
-            checkCredentialExistence: false
-            passThrough: true  
+            checkCredentialExistence: false 
       
       - request-transformer:
         - action:

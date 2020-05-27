@@ -81,19 +81,28 @@ const signInUserController = async (req,res) => {
 const updateUserController = async (req,res) => {
 
     const {body: { addressLine1, addressLine2, city, email, telephoneNumber }} = req;
-    const isUpdated = await userModel.updateUserDetails(addressLine1, addressLine2, city, email, telephoneNumber, req.body.user.id);
+    try{
+        const isUpdated = await userModel.updateUserDetails(addressLine1, addressLine2, city, email, telephoneNumber, req.body.user.id);
 
-    if(isUpdated){
-       res.status(200).send({
-           "status":200,
-           "message":"User details successfully updated"
-       });
-    }else{
-        res.status(200).send({
-            "status":200,
-            "message":"User details update unsuccessful. Try again later"
+        if(isUpdated){
+            res.status(201).send({
+                "status":201,
+                "message":"User details successfully updated"
+            });
+         }else{
+             res.status(200).send({
+                 "status":200,
+                 "message":"User details update unsuccessful. Try again later"
+             });
+         }
+    }catch (err){
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
         });
     }
+
+    
 
     
 
@@ -144,7 +153,9 @@ const getUserController = async (req,res) => {
 };
 
 const checkUserExistenceController = async (req,res) => {
+    console.log(req.params.userId);
     const userExist = await userModel.checkUserExistence(req.params.userId);
+    console.log(userExist);
     if (userExist){
         res.status(201).send({
             "status":201,
