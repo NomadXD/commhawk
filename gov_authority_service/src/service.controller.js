@@ -165,6 +165,46 @@ const getInstituteInfoController = async (req,res) => {
 
 };
 
+
+const updateInstituteContactController = async (req, res) => {
+
+    const updated = await govModel.updateInstituteContact(req.body);
+    if(updated){
+        res.status(201).send({
+            "status":201,
+            "message":"Contact details successfully updated"
+        });
+    }else{
+        res.status(200).send({
+            "status":200,
+            "message":"Contact details update unsuccessful"
+        });
+    }
+
+};
+
+
+const updateInstituteLocationController = async (req, res) => {
+
+    const updated = await govModel.updateLocation(req.body);
+    if(updated){
+        res.status(201).send({
+            "status":201,
+            "message":"Location details successfully updated"
+        });
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
 const getUnverifiedController = async (req,res) => {
 
     const type = req.body.token.type;
@@ -196,4 +236,8 @@ const verifyHQController = async (req,res) => {
 };
 
 
-module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, getInstituteInfoController, getUnverifiedController,verifyHQController};
+
+
+module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, 
+                getInstituteInfoController, getUnverifiedController,verifyHQController, updateInstituteContactController,
+                updateInstituteLocationController};

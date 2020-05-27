@@ -271,4 +271,34 @@ const verifyInstitute = async (instituteId) => {
 
 };
 
-module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, getUnverifiedInstitutes, verifyInstitute};
+const updateInstituteContact = async (data) => {
+
+    const queryString = `UPDATE institute_contact_info SET
+                        email = $1,
+                        phone_number = $2,
+                        fax = $3
+                        where institute_id = $4`;
+    const values = [data.email,data.telephoneNumber, data.fax, data.token.id];
+    await pool.query(queryString, values);
+    return true;
+
+};
+
+const updateLocation = async (data) => {
+    const queryString = `UPDATE institute_location SET
+                        addr_line_1 = $1,
+                        addr_line_2 = $2,
+                        city = $3,
+                        district = $4,
+                        province = $5,
+                        location = ST_SetSRID(ST_MakePoint($6,$7),4326)
+                        where institute_id = $8`;
+    const values = [data.addressLine1, data.addressLine2, data.city, data.district, data.province, 
+                    data.location.lng, data.location.lat, data.token.id];
+
+    await pool.query(queryString, values);
+    return true;
+};
+
+module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, 
+                getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation};
