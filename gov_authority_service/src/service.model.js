@@ -341,5 +341,6 @@ const updateInstituteInfo = async (data) => {
 
 };
 
+
 module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, 
                 getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, updateInstituteInfo};

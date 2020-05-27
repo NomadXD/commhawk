@@ -27,7 +27,8 @@ const signUpController = async (req,res) => {
                     "id":id,
                     "token": token,
                     "displayName": isRegistered,
-                    "type":req.body.type
+                    "type":req.body.type,
+                    "status":201
                 });
             }else{
                 // TODO remove already saved account to achieve data consistency
@@ -45,10 +46,19 @@ const signUpController = async (req,res) => {
             });
         }
     }catch (err){
-        res.status(500).send({
-            "status":500,
-            "message": "Internal Server Error"
-        });
+        if(err.code === "23505"){
+            res.status(200).send({
+                "status":200,
+                "message": "Institute already exist"
+            });
+        }else{
+            res.status(500).send({
+                "status":500,
+                "message": "Internal Server Error"
+            });
+
+        }
+        
     }
 };
 
@@ -211,16 +221,6 @@ const updateInstituteInfoController = async (req, res) => {
         });
     }
 };
-
-
-
-
-
-
-
-
-
-
 
 const getUnverifiedController = async (req,res) => {
 
