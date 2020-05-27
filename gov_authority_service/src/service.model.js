@@ -271,4 +271,76 @@ const verifyInstitute = async (instituteId) => {
 
 };
 
-module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, getUnverifiedInstitutes, verifyInstitute};
+const updateInstituteContact = async (data) => {
+
+    const queryString = `UPDATE institute_contact_info SET
+                        email = $1,
+                        phone_number = $2,
+                        fax = $3
+                        where institute_id = $4`;
+    const values = [data.email,data.telephoneNumber, data.fax, data.token.id];
+    await pool.query(queryString, values);
+    return true;
+
+};
+
+const updateLocation = async (data) => {
+    const queryString = `UPDATE institute_location SET
+                        addr_line_1 = $1,
+                        addr_line_2 = $2,
+                        city = $3,
+                        district = $4,
+                        province = $5,
+                        location = ST_SetSRID(ST_MakePoint($6,$7),4326)
+                        where institute_id = $8`;
+    const values = [data.addressLine1, data.addressLine2, data.city, data.district, data.province, 
+                    data.location.lng, data.location.lat, data.token.id];
+
+    await pool.query(queryString, values);
+    return true;
+};
+
+const updateInstituteInfo = async (data) => {
+    let queryString;
+    let values;
+    if (data.token.type === SERVICE_ENUM.INSTITUTE_TYPES.Police_station){
+        queryString = `UPDATE police SET
+                        station_category = $1,
+                        motor_vehicles = $2,
+                        motor_biycles = $3,
+                        officers = $4,
+                        weapons = $5,
+                        cells = $6
+                        where institute_id = $7`;
+        values = [data.stationCategory, data.motorVehicles, data.motorBicycles, data.officers, data.weapons, data.cells, data.token.id];
+        await pool.query(queryString, values);
+        return true;
+    }else if (data.token.type === SERVICE_ENUM.INSTITUTE_TYPES.Hospital){
+        queryString = `UPDATE hospital SET
+                        hospital_category = $1,
+                        icu_beds = $2,
+                        doctors = $3,
+                        ambulances = $4,
+                        capacity = $5
+                        where institute_id = $6`;
+        values = [data.hospitalCategory, data.icuBeds, data.doctors, data.ambulances, data.capacity, data.token.id];
+        await pool.query(queryString, values);
+        return true;
+    }else if (data.token.type === SERVICE_ENUM.INSTITUTE_TYPES.Fire_station){
+        queryString = `UPDATE firestation SET
+                        fire_trucks = $1,
+                        fire_fighters = $2
+                        where institute_id = $3`;
+        values = [data.fireTrucks, data.fireFighters, data.token.id];
+        await pool.query(queryString,values);
+        return true;
+    }else{
+        return false;
+    }
+
+
+};
+
+
+module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, 
+                getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, updateInstituteInfo};

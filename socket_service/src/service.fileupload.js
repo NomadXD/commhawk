@@ -4,10 +4,10 @@ const multerS3 = require("multer-s3");
 //const config = require("../config");
 
 aws.config.update({
-  secretAccessKey: "3fIBVjYux3lsvtAyTEyS1FxaubNdTe+3ukhEnUVn",
-  accessKeyId: "ASIATPIHHDYUAK2ETWYZ",
+  secretAccessKey: "NWAroHc/EDj4ltch77KR0rtV7tXN2C+i1qFnuHI1",
+  accessKeyId: "ASIATPIHHDYUGJDZLTFK",
   region: "us-east-1",
-  sessionToken:"FwoGZXIvYXdzEJ3//////////wEaDEpInGd7nRvdE9yIpCLNAQAS+Xt2QccGCBqY6s7KspHf92gG5FSlZC/xsM4Pk7WWVtW8aTxskOxdY8k+JAL2qg60FgDPEmvKeVOfdExFzCY3XrIzFCfrgbDDsV/lTmP95fez5GVuYtILnnA/jZsEL6ed7a2PlKm75lg/PwvyS4n3P4hcM5kG5s6CFbvJfVmACcBkgvmytUj9z7jqrSYJlB0j5CRuDyE4mHJJ30+sc15jISt1an73RIPVkYypfQBw31lx6Em8aPVl201BuWjXQ+IyNXaG3GvooBdNE88okNyJ9gUyLbWgLZ8TunYUI+dTT/Ud7gQHQ4ynUf4/4b0NI8syZJh/L3OPlE4tHFrb45BLcw=="
+  sessionToken: "FwoGZXIvYXdzEG8aDJ0bp+d4onDtKsQ6qyLNAamwQDSIFAcDliq8lKzMqPfVDCrgsgMGeUr5GFNHzDSURpyA02EsVjp1xbjkFoHBGzPP+foCS4TrmrdJpzhWr6TW6UacLhdO9efAPbfYLkLLDdt5LcskPCpgrxvHI6bFM30VBfV/5qADlbN8qAQgKmo9NaGaHtCB7w+4tomO/Mvj1BpBWLvsOMlcUYqmd069IN1NzWYwEDeB8FoQbX/1ZcgbcrfVy2sGSGLUe/Y0GFh/slWRhjhcJorYICe1Q3XneHRN1Dph1sfYSgJbH7so7fW39gUyLVfmma7LK6gShf2Pf+XRMzC61yFGPR57jOZ+AD5bDQu7ym8fwxdodb9I8q6qHw=="
 });
 
 const s3 = new aws.S3();
@@ -30,7 +30,7 @@ const upload = multer({
       cb(null, {fieldName: "TESTING_METADATA"});
     },
     key: function (req, file, cb) {
-      cb(null, Date.now().toString());
+      cb(null, Date.now().toString()+"/"+file.originalname);
     }
   })
 });

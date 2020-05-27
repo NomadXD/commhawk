@@ -47,7 +47,7 @@ CREATE TABLE UserCredential (
     user_id uuid4,
     password char(60) not null,
     primary key(user_id),
-    foreign key (user_id) references UserDetail(user_id)
+    foreign key (user_id) references UserDetail(user_id) on delete cascade
 );
 
 
