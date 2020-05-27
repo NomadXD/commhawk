@@ -103,6 +103,7 @@ router.post("/signin",controller.signInUserController);
 router.put("/update",controller.updateUserController);
 router.delete("/delete",controller.deleteUserController);
 router.get("/check/:nic", controller.checkUserExistenceController);
+router.post("/change-password", controller.changePasswordController);
 /**
  * @swagger
  * /api/user/{userId}:

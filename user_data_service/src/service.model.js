@@ -51,5 +51,15 @@ const checkUserExistence = async (userId) => {
     return result.rows[0];
 };
 
+const changePassword = async (userId, newHashedPassword) => {
+    const queryString = `UPDATE usercredential SET
+                        password = $2
+                        where
+                        user_id = $1`;
+    const values = [userId, newHashedPassword];
+    await pool.query(queryString, values);
+    return true;
+};
 
-module.exports = {createUser,getUserPassword,getUserDetails, updateUserDetails, deleteUser, checkUserExistence};
+
+module.exports = {createUser,getUserPassword,getUserDetails, updateUserDetails, deleteUser, checkUserExistence, changePassword};

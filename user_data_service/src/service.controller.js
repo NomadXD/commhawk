@@ -158,7 +158,35 @@ const checkUserExistenceController = async (req,res) => {
     }
 };
 
+const changePasswordController = async (req,res) => {
+    
+    const user = await userModel.getUserPassword(req.body.nic);
+
+    const passwordVerified = bcrypt.compareSync(req.body.oldPassword,user.password);
+    if(passwordVerified){
+        const newHashedPassword = bcrypt.hashSync(req.body.newPassword, 10);
+        const passwordChanged = await userModel.changePassword(req.body.user.id, newHashedPassword);
+        if (passwordChanged){
+            res.status(201).send({
+                "status":201,
+                "message":"Password changed"
+            });
+        }else{
+            res.status(200).send({
+                "status":200,
+                "message":"Password change failed"
+            });
+        }
+    }else{
+        res.status(401).send({
+            "status": 401,
+            "message": "Unauthorized"
+        });
+    }    
+
+};
 
 
 
-module.exports = {signUpUserController,signInUserController,updateUserController,deleteUserController,getUserController, checkUserExistenceController};
+
+module.exports = {signUpUserController,signInUserController,updateUserController,deleteUserController,getUserController, checkUserExistenceController, changePasswordController};
