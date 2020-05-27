@@ -196,6 +196,23 @@ const updateInstituteLocationController = async (req, res) => {
 };
 
 
+const updateInstituteInfoController = async (req, res) => {
+
+    const updated = await govModel.updateInstituteInfo(req.body);
+    if(updated){
+        res.status(201).send({
+            "status":201,
+            "message":"Information updated successfully"
+        });
+    }else{
+        res.status(200).send({
+            "status":200,
+            "messages":"Information update unsuccessful"
+        });
+    }
+};
+
+
 
 
 
@@ -240,4 +257,4 @@ const verifyHQController = async (req,res) => {
 
 module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, 
                 getInstituteInfoController, getUnverifiedController,verifyHQController, updateInstituteContactController,
-                updateInstituteLocationController};
+                updateInstituteLocationController, updateInstituteInfoController};

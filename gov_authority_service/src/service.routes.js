@@ -9,6 +9,7 @@ router.get("/get-all",govAuthController.getAllInstituteController);
 router.post("/get-institute-info",govAuthController.getInstituteInfoController);
 router.post("/update/contact",govAuthController.updateInstituteContactController);
 router.post("/update/location", govAuthController.updateInstituteLocationController);
+router.post("/update/info", govAuthController.updateInstituteInfoController);
 
 router.get("/hq/get-unverified",govAuthController.getUnverifiedController);
 router.get("/hq/verify/:instituteId", govAuthController.verifyHQController);

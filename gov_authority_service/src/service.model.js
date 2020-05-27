@@ -300,5 +300,46 @@ const updateLocation = async (data) => {
     return true;
 };
 
+const updateInstituteInfo = async (data) => {
+    let queryString;
+    let values;
+    if (data.token.type === SERVICE_ENUM.INSTITUTE_TYPES.Police_station){
+        queryString = `UPDATE police SET
+                        station_category = $1,
+                        motor_vehicles = $2,
+                        motor_biycles = $3,
+                        officers = $4,
+                        weapons = $5,
+                        cells = $6
+                        where institute_id = $7`;
+        values = [data.stationCategory, data.motorVehicles, data.motorBicycles, data.officers, data.weapons, data.cells, data.token.id];
+        await pool.query(queryString, values);
+        return true;
+    }else if (data.token.type === SERVICE_ENUM.INSTITUTE_TYPES.Hospital){
+        queryString = `UPDATE hospital SET
+                        hospital_category = $1,
+                        icu_beds = $2,
+                        doctors = $3,
+                        ambulances = $4,
+                        capacity = $5
+                        where institute_id = $6`;
+        values = [data.hospitalCategory, data.icuBeds, data.doctors, data.ambulances, data.capacity, data.token.id];
+        await pool.query(queryString, values);
+        return true;
+    }else if (data.token.type === SERVICE_ENUM.INSTITUTE_TYPES.Fire_station){
+        queryString = `UPDATE firestation SET
+                        fire_trucks = $1,
+                        fire_fighters = $2
+                        where institute_id = $3`;
+        values = [data.fireTrucks, data.fireFighters, data.token.id];
+        await pool.query(queryString,values);
+        return true;
+    }else{
+        return false;
+    }
+
+
+};
+
 module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, 
-                getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation};
+                getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, updateInstituteInfo};
