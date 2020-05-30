@@ -36,6 +36,7 @@ apiEndpoints:
       - '/api/gov/update/contact'
       - '/api/gov/update/location'
       - '/api/gov/update/info'
+      - '/api/gov/update/change-password'
     methods: ["GET","POST","PUT","DELETE","OPTIONS"]
   socket:
     host: '*'
@@ -98,8 +99,7 @@ pipelines:
       - jwt:
         - action:
             secretOrPublicKey: 'secret'
-            checkCredentialExistence: false
-            passThrough: true  
+            checkCredentialExistence: false 
       
       - request-transformer:
         - action:

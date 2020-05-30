@@ -202,6 +202,11 @@ const updateInstituteLocationController = async (req, res) => {
             "status":201,
             "message":"Location details successfully updated"
         });
+    }else{
+        res.status(200).send({
+            "status": 200,
+            "message": "Location update failed"
+        });
     }
 };
 
@@ -252,9 +257,35 @@ const verifyHQController = async (req,res) => {
 
 };
 
+const changePasswordController = async (req, res) => {
+    const loginData = await govModel.getLoginInformation([req.body.token.id]);
+    const isValidPassword = bcrypt.compareSync(req.body.oldPassword, loginData.password);
+    if(isValidPassword){
+        const newHashedPassword = bcrypt.hashSync(req.body.newPassword,10);
+        const isPasswordChanged = await govModel.changeInstitutePassword(newHashedPassword, req.body.token.id);
+        if(isPasswordChanged){
+            res.status(201).send({
+                "status":201,
+                "message":"Password changed"
+            });
+        }else{
+            res.status(500).send({
+                "status":500,
+                "message":"Internal server error"
+            });
+        }
+    }else{
+        res.status(401).send({
+            "status":401,
+            "message":"Unauthorized"
+        });
+    }
+
+};
+
 
 
 
 module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, 
                 getInstituteInfoController, getUnverifiedController,verifyHQController, updateInstituteContactController,
-                updateInstituteLocationController, updateInstituteInfoController};
+                updateInstituteLocationController, updateInstituteInfoController, changePasswordController};

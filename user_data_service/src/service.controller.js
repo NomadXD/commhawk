@@ -81,38 +81,64 @@ const signInUserController = async (req,res) => {
 const updateUserController = async (req,res) => {
 
     const {body: { addressLine1, addressLine2, city, email, telephoneNumber }} = req;
-    const isUpdated = await userModel.updateUserDetails(addressLine1, addressLine2, city, email, telephoneNumber, req.body.user.id);
+    try{
+        const isUpdated = await userModel.updateUserDetails(addressLine1, addressLine2, city, email, telephoneNumber, req.body.user.id);
 
-    if(isUpdated){
-       res.status(200).send({
-           "status":200,
-           "message":"User details successfully updated"
-       });
-    }else{
-        res.status(200).send({
-            "status":200,
-            "message":"User details update unsuccessful. Try again later"
+        if(isUpdated){
+            res.status(201).send({
+                "status":201,
+                "message":"User details successfully updated"
+            });
+         }else{
+             res.status(500).send({
+                 "status":500,
+                 "message":"User details update unsuccessful. Try again later"
+             });
+         }
+    }catch (err){
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
         });
     }
+
+    
 
     
 
 };
 
 const deleteUserController = async (req,res) => {
-
-   const isDeleted = await userModel.deleteUser(req.body.user.id);
-   if(isDeleted){
-       res.status(201).send({
-           "status":201,
-           "message":"User deleted successfully"
-       });
+   const user = await userModel.getUserPassword(req.body.nic);
+   if(user){
+        const isValid = bcrypt.compareSync(req.body.password,user.password);
+        if(isValid){
+            const isDeleted = await userModel.deleteUser(req.body.user.id);
+            if(isDeleted){
+                res.status(201).send({
+                    "status":201,
+                    "message":"User deleted successfully"
+                });
+            }else{
+                res.status(500).send({
+                    "status": 500,
+                    "message":"User deletion failed"
+                });
+            }
+        }else{
+            res.status(401).send({
+                "status":401,
+                "message":"Unauthorized"
+            });
+        }
+    
    }else{
-       res.status(200).send({
-           "status": 200,
-           "message":"User deletion failed"
+       res.status(500).send({
+           "status":401,
+           "message":"Unauthorized"
        });
-   }
+   } 
+   
 
 };
 
@@ -161,28 +187,37 @@ const checkUserExistenceController = async (req,res) => {
 const changePasswordController = async (req,res) => {
     
     const user = await userModel.getUserPassword(req.body.nic);
-
-    const passwordVerified = bcrypt.compareSync(req.body.oldPassword,user.password);
-    if(passwordVerified){
-        const newHashedPassword = bcrypt.hashSync(req.body.newPassword, 10);
-        const passwordChanged = await userModel.changePassword(req.body.user.id, newHashedPassword);
-        if (passwordChanged){
-            res.status(201).send({
-                "status":201,
-                "message":"Password changed"
-            });
+    if(user){
+        const passwordVerified = bcrypt.compareSync(req.body.oldPassword,user.password);
+        if(passwordVerified){
+            const newHashedPassword = bcrypt.hashSync(req.body.newPassword, 10);
+            const passwordChanged = await userModel.changePassword(req.body.user.id, newHashedPassword);
+            if (passwordChanged){
+                res.status(201).send({
+                    "status":201,
+                    "message":"Password changed"
+                });
+            }else{
+                res.status(500).send({
+                    "status":500,
+                    "message":"Password change failed"
+                });
+            }
         }else{
-            res.status(200).send({
-                "status":200,
-                "message":"Password change failed"
+            res.status(401).send({
+                "status": 401,
+                "message": "Unauthorized"
             });
-        }
+        }    
+
     }else{
         res.status(401).send({
-            "status": 401,
-            "message": "Unauthorized"
+            "status":401,
+            "message":"Unauthorized"
         });
-    }    
+    }
+
+    
 
 };
 
