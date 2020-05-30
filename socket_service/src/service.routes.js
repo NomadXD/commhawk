@@ -7,19 +7,21 @@ const socketController = require("./service.controller");
 // const rethinkDB = require("./service.rethinkdb");
 
 
-router.get("/test",async (req,res)=> {
+router.post("/test",async (req,res)=> {
     // let Ref = firestore.collection("provinces").doc("WP");
     // let arrUnion = Ref.update({
     //     users: admin.firestore.FieldValue.arrayUnion("bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1")
     //   });
 
     // await rethinkDB.createIncidentDoc("13f77fe4-abee-4e00-8c5b-e2f0ab01e29b",req.broadcastChannel);
+    console.log("Here");
+    socketController.testImageUpload(req,res);
     //await rethinkDB.insertIncident();
   
-    res.json({
-        "sucess": "From socket service",
-        "result":"Hi gov!"
-    });
+    // res.json({
+    //     "sucess": "From socket service",
+    //     "result":"Hi gov!"
+    // });
 });
 
 router.post("/send-message",socketController.messengeSenderController);

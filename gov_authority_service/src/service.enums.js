@@ -11,6 +11,6 @@ const serviceEnum = {
         "Firestation_HQ":9
 
     }
-}
+};
 
 module.exports = serviceEnum;

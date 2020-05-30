@@ -14,7 +14,6 @@ const getUserPassword = async (nic) => {
     const queryString = "SELECT usercredential.user_id,usercredential.password from usercredential,userdetail where (usercredential.user_id = userdetail.user_id) and (userdetail.nic) = $1";
     const values = [nic];
     let result = await pool.query(queryString,values);
-    console.log(result.rows[0]);
     return result.rows[0];
 };
 
@@ -25,5 +24,42 @@ const getUserDetails = async (id) => {
     return result.rows[0];
 };
 
+const updateUserDetails = async (addressLine1, addressLine2, city, email, telephoneNumber, userId) => {
+    const queryString = `UPDATE userdetail SET
+                        addr_line_1 = $1,
+                        addr_line_2 = $2,
+                        city = $3,
+                        email = $4,
+                        telephone_number = $5
+                        where user_id = $6`;
+    const values = [addressLine1, addressLine2, city, email, telephoneNumber, userId];
+    await pool.query(queryString, values);
+    return true;
+};
 
-module.exports = {createUser,getUserPassword,getUserDetails};
+const deleteUser = async (userId) => {
+    const queryString = "DELETE from userdetail where user_id = $1";
+    const values = [userId];
+    await pool.query(queryString,values);
+    return true;
+};
+
+const checkUserExistence = async (userId) => {
+    const queryString = "SELECT user_id from userdetail where nic = $1";
+    const values = [userId];
+    const result = await pool.query(queryString, values);
+    return result.rows[0];
+};
+
+const changePassword = async (userId, newHashedPassword) => {
+    const queryString = `UPDATE usercredential SET
+                        password = $2
+                        where
+                        user_id = $1`;
+    const values = [userId, newHashedPassword];
+    await pool.query(queryString, values);
+    return true;
+};
+
+
+module.exports = {createUser,getUserPassword,getUserDetails, updateUserDetails, deleteUser, checkUserExistence, changePassword};
