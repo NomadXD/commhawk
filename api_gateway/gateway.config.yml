@@ -36,6 +36,7 @@ apiEndpoints:
       - '/api/gov/update/contact'
       - '/api/gov/update/location'
       - '/api/gov/update/info'
+      - '/api/gov/update/change-password'
     methods: ["GET","POST","PUT","DELETE","OPTIONS"]
   socket:
     host: '*'

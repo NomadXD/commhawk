@@ -341,6 +341,14 @@ const updateInstituteInfo = async (data) => {
 
 };
 
+const changeInstitutePassword = async (password, instituteId) => {
+    const queryString = `UPDATE institute_credentials SET password = $1
+                        where institute_id = $2`;
+    const values = [password, instituteId];
+    await pool.query(queryString, values);
+    return true;
+};
+
 
 module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, 
-                getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, updateInstituteInfo};
+                getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, updateInstituteInfo, changeInstitutePassword};
