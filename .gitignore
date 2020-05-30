@@ -2,5 +2,7 @@ user_data_service/node_modules
 socket_service/node_modules
 gov_authority_service/node_modules
 push_notification_service/node_modules
+push_notification_service/config
 user_data_service/coverage
 gov_authority_service/coverage
+
