@@ -44,7 +44,14 @@ apiEndpoints:
       - '/api/socket/broadcast'
       - '/api/socket/test'
       - '/api/socket/send-message'
-    methods: ["GET","POST","PUT","DELETE","OPTIONS"] 
+    methods: ["GET","POST","PUT","DELETE","OPTIONS"]
+  push:
+    host: '*'
+    paths:
+      - '/api/push/send'
+      - '/api/push/send-all'
+      - '/api/push/save-location'
+    methods: ["GET","POST","PUT","DELETE","OPTIONS"]  
 serviceEndpoints:
   noAuthService:
     url: 'http://uds:3000'
@@ -54,6 +61,8 @@ serviceEndpoints:
     url: 'http://gov_auth:3000'
   govAuthService:
     url: 'http://gov_auth:3000'
+  push:
+    url: 'http://push:3000'
 policies:
   - log
   - proxy
@@ -184,5 +193,33 @@ pipelines:
       - proxy:
         - action:
             serviceEndpoint: govNoAuthService
+
+  push:
+    apiEndpoints:
+      - push
+    policies:
+      - cors:
+        - action:
+            origin: '*'
+            credentials: true
+            methods: GET,POST,PUT,DELETE,OPTIONS
+            allowedHeaders: ['Authorization','Content-type','Origin','Access-Control-Allow-Origin','Accept','Options','Access-Control-Request-Headers','Access-Control-Request-Method']
+            exposedHeaders: ['Content-type','Origin','Access-Control-Allow-Origin','Accept','Options','Access-Control-Request-Headers','Access-Control-Request-Method']
+            #exposedHeaders : ['Content-type','Authorization','Origin','Access-Control-Allow-Origin','Origin', 'Accept', 'X-Requested-With', 'Content-Type', 'Access-Control-Request-Method', 'Access-Control-Request-Headers','Authorization', 'Access-Control-Allow-Origin','X-TEST']
+            preflightContinue: false
+            optionsSuccessStatus: 204
+            #maxAge: 600
+      - jwt:
+        - action:
+            secretOrPublicKey: 'secret'
+            checkCredentialExistence: false
+      - request-transformer:
+        - action:
+            body:
+              add:
+                token: req.user
+      - proxy:
+        - action:
+            serviceEndpoint: push
 
       
