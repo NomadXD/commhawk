@@ -4,6 +4,7 @@ const uuid = require("uuid/v4");
 const jwt = require("jsonwebtoken");
 const upload = require("./service.fileupload");
 const singleUpload = upload.single("image");
+const reportModel = require("./service.model");
 
 
 const dispatchBroadcast = async (req,res) => {
@@ -42,7 +43,7 @@ const messengeSenderController = async (req,res) => {
         if (req.file){
             report["url"] = req.file.location;
         }
-
+        console.log(req.body.title);
         report["id"] = uuid();
         report["title"] = req.body.title;
         report["description"] = req.body.description;
@@ -70,6 +71,11 @@ const messengeSenderController = async (req,res) => {
                 "institutes":institutes,
                 "report_id":report["id"]
             });
+
+            //
+            // const tokens = await fetch("http://localhost:8080/api/gov/update/contact", {method: 'POST', body: JSON.stringify(body) ,headers:headers}).then(res => res.json());
+            reportModel.saveReportData(report);
+            //
     
         }else{
             res.status(500).send({

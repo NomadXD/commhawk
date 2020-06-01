@@ -67,6 +67,8 @@ services:
       - "3003:3000"
     depends_on: 
       - rethinkdb
+    environment: 
+      DATABASE_URL: postgres://commhawk:password@postgres:5432/gov_auth
     volumes: 
       - ./socket_service:/src
 
