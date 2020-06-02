@@ -230,6 +230,32 @@ CREATE TABLE FireStation(
 ) INHERITS (Institute_Location);
 
 
+create table report(
+	report_id uuid4,
+	title varchar(255) not null,
+	description text not null,
+	date timestamp not null,
+	province varchar(7) not null,
+	primary key (report_id),
+	foreign key (province) references province(province_code) on delete cascade
+);
+
+create table report_category(
+	report_id uuid4,
+	category int not null,
+	foreign key (category) references institute_type(institute_type) on delete cascade,
+	foreign key (report_id) references report(report_id) on delete cascade
+);
+
+
+create table report_token(
+	report_id uuid4,
+	token varchar(31) not null,
+	foreign key (report_id) references report(report_id) on delete cascade
+);
+
+
+
 
 
 /*
@@ -431,3 +457,28 @@ BEGIN
 END ; 
 $$ LANGUAGE plpgsql;
 
+
+
+create or replace procedure saveReport(int[],varchar[],UUID4,varchar(255),text,varchar(7)) 
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+	categories ALIAS for $1;
+	tokens ALIAS for $2;
+	report_id ALIAS for $3;
+	title ALIAS for $4;
+	description ALIAS for $5;
+	province ALIAS for $6;
+BEGIN
+	INSERT into report values (report_id, title, description, NOW(), province);
+	FOR I IN array_lower(categories, 1)..array_upper(categories, 1)
+	LOOP
+		INSERT INTO report_category VALUES(report_id,categories[I]);		
+	END LOOP;
+	FOR I IN array_lower(tokens, 1)..array_upper(tokens, 1)
+	LOOP
+		INSERT INTO report_token VALUES(report_id,tokens[I]);		
+	END LOOP;
+	
+END;
+$$;
