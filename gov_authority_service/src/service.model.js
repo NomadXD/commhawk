@@ -349,6 +349,29 @@ const changeInstitutePassword = async (password, instituteId) => {
     return true;
 };
 
+const analyzeTokens = async (accountType, startDate, endDate) => {
+    let category;
+    if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Police_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Police_station;
+    }else if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Hospital_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Hospital;
+    }else if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Firestation_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Fire_station;
+    }else{
+        category = accountType;
+    }
+    const queryString = `select rt.token,count(rt.token) from report_token rt, report_category rc, report r where  
+                        r.report_id = rc.report_id and
+                        rc.report_id = rt.report_id and
+                        rc.category = $1 and
+                        r.date BETWEEN $2 AND $3
+                        group by rt.token`;
+    const values = [category, startDate, endDate];
+    const result = await pool.query(queryString, values);
+    return result.rows;
+};
+
 
 module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, 
-                getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, updateInstituteInfo, changeInstitutePassword};
+                getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, 
+                updateInstituteInfo, changeInstitutePassword, analyzeTokens};

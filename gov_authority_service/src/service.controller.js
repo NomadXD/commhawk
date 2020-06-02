@@ -283,9 +283,27 @@ const changePasswordController = async (req, res) => {
 
 };
 
+const analyticsTokenController = async (req, res) => {
+    console.log(req.body.token);
+    try {
+        const data = await govModel.analyzeTokens(req.body.token.type, req.body.startDate, req.body.endDate);
+        res.status(200).send({
+            "status":200,
+            "results": data
+        });
+    } catch (error) {
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
+        });
+    }
+
+};
+
 
 
 
 module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, 
                 getInstituteInfoController, getUnverifiedController,verifyHQController, updateInstituteContactController,
-                updateInstituteLocationController, updateInstituteInfoController, changePasswordController};
+                updateInstituteLocationController, updateInstituteInfoController, changePasswordController,
+                analyticsTokenController};

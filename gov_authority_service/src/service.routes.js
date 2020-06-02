@@ -14,6 +14,7 @@ router.post("/update/change-password", govAuthController.changePasswordControlle
 
 router.get("/hq/get-unverified",govAuthController.getUnverifiedController);
 router.get("/hq/verify/:instituteId", govAuthController.verifyHQController);
+router.post("/hq/analytics/token", govAuthController.analyticsTokenController);
 
 
 module.exports = router;
