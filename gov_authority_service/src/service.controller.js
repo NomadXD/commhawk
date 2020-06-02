@@ -333,10 +333,25 @@ const analyticsProvinceController = async (req, res) => {
     }
 };
 
-
+const analyticsDayController = async (req, res) => {
+    try {
+        const data = await govModel.analyzeDay(req.body.token.type);
+        res.status(200).send({
+            "status": 200,
+            "results":data
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
+        });
+        
+    }
+};
 
 
 module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, 
                 getInstituteInfoController, getUnverifiedController,verifyHQController, updateInstituteContactController,
                 updateInstituteLocationController, updateInstituteInfoController, changePasswordController,
-                analyticsTokenController, analyticsDateController, analyticsProvinceController};
+                analyticsTokenController, analyticsDateController, analyticsProvinceController, analyticsDayController};

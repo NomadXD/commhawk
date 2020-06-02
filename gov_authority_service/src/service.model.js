@@ -413,7 +413,27 @@ const analyzeProvince = async (accountType, startDate, endDate) => {
     return result.rows;
 };
 
+const analyzeDay = async (accountType) => {
+    let category;
+    if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Police_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Police_station;
+    }else if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Hospital_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Hospital;
+    }else if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Firestation_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Fire_station;
+    }else{
+        category = accountType;
+    }
+    const queryString = `select extract(isodow from r.date::timestamp::date) as day,count(extract(isodow from r.date::timestamp::date))::INT from 
+                        report_category rc, report r where  
+                        r.report_id = rc.report_id and
+                        rc.category = $1
+                        group by extract(isodow from r.date::timestamp::date)`;
+    const values = [category];
+    const result = await pool.query(queryString, values);
+    return result.rows;
+};
 
 module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, 
                 getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, 
-                updateInstituteInfo, changeInstitutePassword, analyzeTokens, analyzeDate, analyzeProvince};
+                updateInstituteInfo, changeInstitutePassword, analyzeTokens, analyzeDate, analyzeProvince, analyzeDay};
