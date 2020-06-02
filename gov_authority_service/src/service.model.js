@@ -371,7 +371,49 @@ const analyzeTokens = async (accountType, startDate, endDate) => {
     return result.rows;
 };
 
+const analyzeDate = async (accountType, startDate, endDate) => {
+    let category;
+    if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Police_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Police_station;
+    }else if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Hospital_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Hospital;
+    }else if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Firestation_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Fire_station;
+    }else{
+        category = accountType;
+    }
+    const queryString = `select r.date::timestamp::date,count(r.date) from report_category rc, report r where  
+                        r.report_id = rc.report_id and
+                        rc.category = $1 and
+                        r.date BETWEEN $2 AND $3
+                        group by r.date::timestamp::date`;
+    const values = [category, startDate, endDate];
+    const result = await pool.query(queryString, values);
+    return result.rows;
+};
+
+const analyzeProvince = async (accountType, startDate, endDate) => {
+    let category;
+    if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Police_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Police_station;
+    }else if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Hospital_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Hospital;
+    }else if(accountType === SERVICE_ENUM.INSTITUTE_TYPES.Firestation_HQ){
+        category = SERVICE_ENUM.INSTITUTE_TYPES.Fire_station;
+    }else{
+        category = accountType;
+    }
+    const queryString = `select r.province,count(r.province) from report_category rc, report r where  
+                        r.report_id = rc.report_id and
+                        rc.category = $1 and
+                        r.date BETWEEN $2 AND $3
+                        group by r.province;`;
+    const values = [category, startDate, endDate];
+    const result = await pool.query(queryString, values);
+    return result.rows;
+};
+
 
 module.exports = {createGovInsititute,getInstituteInfo,getLoginInformation,getRelatedInsitute, getAll, 
                 getUnverifiedInstitutes, verifyInstitute, updateInstituteContact, updateLocation, 
-                updateInstituteInfo, changeInstitutePassword, analyzeTokens};
+                updateInstituteInfo, changeInstitutePassword, analyzeTokens, analyzeDate, analyzeProvince};
