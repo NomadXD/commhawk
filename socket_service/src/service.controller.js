@@ -72,9 +72,13 @@ const messengeSenderController = async (req,res) => {
                 "report_id":report["id"]
             });
 
+            const headers = {
+                "Content-Type":"application/json"
+            };
+
             //
-            // const tokens = await fetch("http://localhost:8080/api/gov/update/contact", {method: 'POST', body: JSON.stringify(body) ,headers:headers}).then(res => res.json());
-            reportModel.saveReportData(report);
+            const modelResponse = await fetch("https://lochana.pythonanywhere.com/predictTokens", {method: "POST", body: JSON.stringify({"message":report.description}) ,headers:headers}).then(res => res.json());
+            reportModel.saveReportData(report, modelResponse.tokens);
             //
     
         }else{

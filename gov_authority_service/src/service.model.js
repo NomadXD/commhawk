@@ -360,7 +360,7 @@ const analyzeTokens = async (accountType, startDate, endDate) => {
     }else{
         category = accountType;
     }
-    const queryString = `select rt.token,count(rt.token) from report_token rt, report_category rc, report r where  
+    const queryString = `select rt.token,count(rt.token)::INT from report_token rt, report_category rc, report r where  
                         r.report_id = rc.report_id and
                         rc.report_id = rt.report_id and
                         rc.category = $1 and
@@ -382,7 +382,7 @@ const analyzeDate = async (accountType, startDate, endDate) => {
     }else{
         category = accountType;
     }
-    const queryString = `select r.date::timestamp::date,count(r.date) from report_category rc, report r where  
+    const queryString = `select r.date::timestamp::date,count(r.date)::INT from report_category rc, report r where  
                         r.report_id = rc.report_id and
                         rc.category = $1 and
                         r.date BETWEEN $2 AND $3
@@ -403,7 +403,7 @@ const analyzeProvince = async (accountType, startDate, endDate) => {
     }else{
         category = accountType;
     }
-    const queryString = `select r.province,count(r.province) from report_category rc, report r where  
+    const queryString = `select r.province,count(r.province)::INT from report_category rc, report r where  
                         r.report_id = rc.report_id and
                         rc.category = $1 and
                         r.date BETWEEN $2 AND $3

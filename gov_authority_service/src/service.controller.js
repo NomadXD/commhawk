@@ -350,8 +350,31 @@ const analyticsDayController = async (req, res) => {
     }
 };
 
+const analyticsController = async (req, res) => {
+    try {
+        const token = await govModel.analyzeTokens(req.body.token.type, req.body.startDate, req.body.endDate);
+        const date = await govModel.analyzeDate(req.body.token.type, req.body.startDate, req.body.endDate);
+        const province = await govModel.analyzeProvince(req.body.token.type, req.body.startDate, req.body.endDate);
+        const day = await govModel.analyzeDay(req.body.token.type);
+        res.status(200).send({
+            "status":200,
+            "tokenAnalytics":token,
+            "dateAnalytics": date,
+            "provinceAnalytics": province,
+            "dayAnalytics": day
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            "status":500,
+            "message":"Internal server error"
+        });
+    }
+};
+
 
 module.exports = {signUpController, signInController, autoAssignInstituteController, getAllInstituteController, 
                 getInstituteInfoController, getUnverifiedController,verifyHQController, updateInstituteContactController,
                 updateInstituteLocationController, updateInstituteInfoController, changePasswordController,
-                analyticsTokenController, analyticsDateController, analyticsProvinceController, analyticsDayController};
+                analyticsTokenController, analyticsDateController, analyticsProvinceController, analyticsDayController,
+                analyticsController};

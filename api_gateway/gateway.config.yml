@@ -41,6 +41,7 @@ apiEndpoints:
       - '/api/gov/hq/analytics/date'
       - '/api/gov/hq/analytics/province'
       - '/api/gov/hq/analytics/day'
+      - '/api/gov/hq/analytics'
     methods: ["GET","POST","PUT","DELETE","OPTIONS"]
   socket:
     host: '*'

@@ -18,6 +18,7 @@ router.post("/hq/analytics/token", govAuthController.analyticsTokenController);
 router.post("/hq/analytics/date", govAuthController.analyticsDateController);
 router.post("/hq/analytics/province", govAuthController.analyticsProvinceController);
 router.post("/hq/analytics/day", govAuthController.analyticsDayController);
+router.post("/hq/analytics", govAuthController.analyticsController);
 
 module.exports = router;
 
