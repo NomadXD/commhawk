@@ -1,27 +1,28 @@
 const alert = require("./service.model")
 
 const saveAndSendAlert = async (req,res) => {
-    console.log("Here")
-    const province = req.body.province
+    const id = req.body.token.id
+    const province_list = req.body.province_list
     const title = req.body.title
     const body = req.body.body
     const level = req.body.level
-    if(province == '' || title == '' ||body == ''||level == ''){
+    if(id == "" || province_list == '' || title == '' ||body == ''||level == ''){
         err = 'fields cannot be empty'
         res.status(400).send({
             "status": 400,
-            "message":"Bad request",
+            "message": "Bad request",
             'error': err
         })
     }
     else{
         try{
-            const result = await alert.sendAlert(province,title,body,level)
-            const id = await alert.saveAlert(province,title,body,level)
-            res.status(201).json({
-                "status": 201,
+            const result = await alert.sendAlert(province_list,title,body,level)
+            const msg_id = await alert.saveAlert(id,province_list,title,body,level,'','')
+            res.status(200).send({
+                "status":200,
+                "message":"Successfully sent",
                 'users': result,
-                'msg_id': id
+                'msg_id': msg_id
             })
                 
         }catch(err){
@@ -37,11 +38,13 @@ const saveAndSendAlert = async (req,res) => {
 }
 
 const saveAndSendAll = async (req,res) => {
-    const province = req.body.province
+    const id = req.body.token.id
     const title = req.body.title
     const body = req.body.body
     const level = req.body.level
-    if(province == '' || title == '' ||body == ''||level == ''){
+    const center = req.body.center
+    const radius = req.body.radius
+    if(id == '' || title == '' ||body == ''||level == ''||center == ''||radius == ''){
         err = 'fields cannot be empty'
         res.status(400).send({
             "status":400,
@@ -51,28 +54,43 @@ const saveAndSendAll = async (req,res) => {
     }
     else{
         try{
-            const result = await alert.sendAlertAll(province,title,body,level)
-            const id = await alert.saveAlert(province,title,body,level)
-            res.status(201).send({
-                "status":201,
-                "message":"Alert sent successfully",
+            const result = await alert.sendAlertAll(title,body,level,center,radius)
+            const msg_id = await alert.saveAlert(id,'',title,body,level,center,radius)
+            res.send(200).send({
+                "status":200,
+                "message":"Successfully sent",
                 'users': result,
-                'msg_id': id
+                'msg_id': msg_id
             })
-                
         }catch(err){
             console.log('error',err);
             res.status(500).send({
-                "status":500,
-                "message":"Internal server error",
+                "status": 500,
+                "message": "Internal server error",
                 'error': err
             })
         }
     }
 }
 
+const getMessages = async (req,res) => {
+    const id = req.body.token.id
+    if(id == ''){
+        err = 'fields cannot be empty'
+        res.json({
+            'error': err
+        })
+    }
+    else{
+        const result = await alert.getMessages(id)
+        res.json({
+            'message_list':result
+        })
+    }
+    
+}
+
 const saveLocation = async (req,res) => {
-    //console.log(req.body)
     const prev_location = req.body.prev_location
     const curr_location = req.body.curr_location
     const FCM_token = req.body.FCM_token
@@ -92,7 +110,7 @@ const saveLocation = async (req,res) => {
                 "message":"location saved",
                 'users': result,
             })
-                
+            //console.log(res)  
         }catch(err){
             console.log('error',err);
             res.status(500).send({
@@ -106,4 +124,4 @@ const saveLocation = async (req,res) => {
 
 
 
-module.exports = {saveAndSendAlert,saveAndSendAll,saveLocation}
+module.exports = {saveAndSendAlert,saveAndSendAll,saveLocation,getMessages}

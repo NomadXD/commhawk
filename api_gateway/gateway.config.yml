@@ -53,10 +53,11 @@ apiEndpoints:
   push:
     host: '*'
     paths:
-      - '/api/push/send'
-      - '/api/push/send-all'
-      - '/api/push/save-location'
-    methods: ["GET","POST","PUT","DELETE","OPTIONS"]  
+    - '/api/push/send'
+    - '/api/push/send-all'
+    - '/api/push/save-location'
+    - '/api/push/get-messages'
+    methods: ["GET","POST","PUT","DELETE","OPTIONS"] 
 serviceEndpoints:
   noAuthService:
     url: 'http://uds:3000'
@@ -66,7 +67,7 @@ serviceEndpoints:
     url: 'http://gov_auth:3000'
   govAuthService:
     url: 'http://gov_auth:3000'
-  push:
+  pushService:
     url: 'http://push:3000'
 policies:
   - log
@@ -225,6 +226,7 @@ pipelines:
                 token: req.user
       - proxy:
         - action:
-            serviceEndpoint: push
+            serviceEndpoint: pushService
+
 
       
