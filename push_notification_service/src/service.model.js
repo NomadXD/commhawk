@@ -4,27 +4,8 @@ const serverKey = 'AAAAuJRM-o0:APA91bGKORX2zFjwtOz6gY948-4EuzZJgSIUSpmP2LebX7HYW
 const fcm = new FCM(serverKey);
 const getCurrentProvince = require('./service.province-classifier');
 
-const sendAlert = async(province,title,body,level) =>{
-    const result = await db.collection('locations').doc(province).get()
-        .then(doc => {
-            if (doc.data() == undefined) {
-                console.log('No matching documents.');
-                s = 'No matching docs'
-                return s
-            } 
-            else{
-                user_tokens = doc.data().available_users
-                send(user_tokens,province,title,body,level)
-                return user_tokens
-            }
-        })
-        .catch(err => {
-            console.log('Error getting documents', err);
-    })
-    return result
-}
 
-const sendAlertAll = async(province,title,body,level) =>{
+const sendAlertAll = async(title,body,level,center,radius) =>{
     var user_list = []
     const result = await db.collection("users").get()
     .then(snapshot => {
@@ -37,7 +18,7 @@ const sendAlertAll = async(province,title,body,level) =>{
             user_token = doc.id
             user_list.push(user_token)
         });
-        send(user_list,province,title,body,level)
+        send(user_list,title,body,level,radius,center)
         return user_list
         })
     .catch(err => {
@@ -46,21 +27,89 @@ const sendAlertAll = async(province,title,body,level) =>{
     return result
 }
 
-
-const saveAlert = async(province,title,body,level) => {
-    var today = new Date();
-    const msgData = {
-        province: province,
-        title: title,
-        body: body,
-        level: level,
-        created: today
+const sendAlert = async(province_list,title,body,level) =>{
+    var token_list = []
+    var k = 0 
+    //console.log(token_list.length)
+    
+    for(k=0;k<province_list.length;k++){
+        const tokens = await db.collection('locations').doc(province_list[k]).get()
+        .then(doc => {
+            if (doc.data() == undefined) {
+                console.log('No matching documents.');
+                return []
+            } 
+            else{
+                user_tokens = doc.data().available_users
+                return user_tokens
+            }
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+        token_list = token_list.concat(tokens)
     }
-    const result = await db.collection('messages').add(msgData).then(doc =>{
-        return(doc.id)
-    })
-    return result
+    send(token_list,title,body,level,'','')
+    return token_list
 }
+
+
+const saveAlert = async(id,province,title,body,level,center,radius) => {
+    var today = new Date();
+    if (radius == ''& center == ''){
+            const msgData = {
+                id: id,
+                title: title,
+                province: province,
+                body: body,
+                level: level,
+                created: today
+            }
+            const result = await db.collection('messages').add(msgData).then(doc =>{
+                    return(doc.id)
+                })
+            return result
+        }
+    else if (province == ''){
+            const msgData = {
+                id: id,
+                title: title,
+                body: body,
+                level: level,
+                center: center,
+                radius: radius,
+                created: today
+            }
+            const result = await db.collection('messages').add(msgData).then(doc =>{
+                    return(doc.id)
+                })
+            return result
+        }
+}
+
+const getMessages = async(id) =>{
+    var list = []
+    const message_list = await db.collection('messages').get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+            var s = "No matching documents."
+            console.log('No matching documents.');
+            return s
+        } 
+        snapshot.forEach(doc => {
+            if(doc.data().id == id){
+                list.push(doc.data())
+            }
+        });
+        return list
+        })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    }); 
+    return message_list
+}
+    
+
 
 const saveLocation = async(prev_location, curr_location, FCM_token) => {
     var prev_province = null;
@@ -69,14 +118,14 @@ const saveLocation = async(prev_location, curr_location, FCM_token) => {
         prev_lng = prev_location[1]
         prev_lat = prev_location[0]
         var prev_province = await getCurrentProvince(prev_lat,prev_lng)
-        console.log(prev_province,prev_lat,prev_lng);
+        //console.log(prev_province,prev_lat,prev_lng);
     }
     curr_lng = curr_location[1]
     curr_lat = curr_location[0]
-    console.log(curr_lat,curr_lng)
+    //console.log(curr_lat,curr_lng)
     var curr_province = await getCurrentProvince(curr_lat,curr_lng)
 
-    console.log(curr_province)
+    //console.log(curr_province)
     if (prev_province != null){
         if(prev_province != curr_province){
             let ref_prev_province = db.collection('locations').doc(prev_province);
@@ -87,7 +136,7 @@ const saveLocation = async(prev_location, curr_location, FCM_token) => {
                         if (doc.data() == undefined) {
                             console.log('No matching documents.');
                             s = 'No matching docs'
-                            console.log(s)
+                            //console.log(s)
                             return s
                         } 
                         else{
@@ -122,7 +171,7 @@ const saveLocation = async(prev_location, curr_location, FCM_token) => {
                     .catch(err => {
                         console.log('Error getting documents', err);
                 })
-                console.log(result)
+                //console.log(result)
                 return result
             })
             return transaction1
@@ -155,7 +204,9 @@ const saveLocation = async(prev_location, curr_location, FCM_token) => {
 
 }
 
-function send(list,province,title,body,level){
+
+
+function send(list,title,body,level,radius,center){
     var today = new Date();
     var m = today.getMonth();
     var d = today.getDate();
@@ -170,11 +221,13 @@ function send(list,province,title,body,level){
     
     var date = today.getFullYear()+'-'+m+'-'+d;
     var time = h + ":" + min
-    title = title + ' in ' + province
   
     if (list == []){
         console.log('no users')
     }
+    //c = center.map((x) =>parseInt(x));
+    
+    //console.log(c)
     var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
         registration_ids: list,
         collapse_key: '4',
@@ -189,17 +242,19 @@ function send(list,province,title,body,level){
             title: title, 
             body: body,
             level: level,
-            date_time: date +'      '+ time
+            date_time: date +'      '+ time,
+            radius: radius,
+            center: center
             }
     };
                     
     fcm.send(message, function(err, response){
         if (err) {
-            console.log("Something has gone wrong!");
+            console.log("Something has gone wrong!",err);
         } else {
             console.log("Successfully sent with response: ", response);
         }
     });
 }
 
-module.exports = {sendAlert,saveAlert,sendAlertAll,saveLocation};
+module.exports = {sendAlert,saveAlert,sendAlertAll,saveLocation,getMessages};
