@@ -1,14 +1,16 @@
 const alert = require("./service.model")
 
 const saveAndSendAlert = async (req,res) => {
-    const id = req.body.id
+    const id = req.body.token.id
     const province_list = req.body.province_list
     const title = req.body.title
     const body = req.body.body
     const level = req.body.level
     if(id == "" || province_list == '' || title == '' ||body == ''||level == ''){
         err = 'fields cannot be empty'
-        res.json({
+        res.status(400).send({
+            "status": 400,
+            "message": "Bad request",
             'error': err
         })
     }
@@ -16,14 +18,18 @@ const saveAndSendAlert = async (req,res) => {
         try{
             const result = await alert.sendAlert(province_list,title,body,level)
             const msg_id = await alert.saveAlert(id,province_list,title,body,level,'','')
-            res.json({
+            res.status(200).send({
+                "status":200,
+                "message":"Successfully sent",
                 'users': result,
                 'msg_id': msg_id
             })
                 
         }catch(err){
             console.log('error',err);
-            res.json({
+            res.status(500).send({
+                "status": 500,
+                "message": "Internal server error",
                 'error': err
             })
         }
@@ -32,7 +38,7 @@ const saveAndSendAlert = async (req,res) => {
 }
 
 const saveAndSendAll = async (req,res) => {
-    const id = req.body.id
+    const id = req.body.token.id
     const title = req.body.title
     const body = req.body.body
     const level = req.body.level
@@ -40,7 +46,9 @@ const saveAndSendAll = async (req,res) => {
     const radius = req.body.radius
     if(id == '' || title == '' ||body == ''||level == ''||center == ''||radius == ''){
         err = 'fields cannot be empty'
-        res.json({
+        res.status(400).send({
+            "status":400,
+            "message":"Bad request",
             'error': err
         })
     }
@@ -48,13 +56,17 @@ const saveAndSendAll = async (req,res) => {
         try{
             const result = await alert.sendAlertAll(title,body,level,center,radius)
             const msg_id = await alert.saveAlert(id,'',title,body,level,center,radius)
-            res.json({
+            res.send(200).send({
+                "status":200,
+                "message":"Successfully sent",
                 'users': result,
                 'msg_id': msg_id
             })
         }catch(err){
             console.log('error',err);
-            res.json({
+            res.status(500).send({
+                "status": 500,
+                "message": "Internal server error",
                 'error': err
             })
         }
@@ -62,7 +74,7 @@ const saveAndSendAll = async (req,res) => {
 }
 
 const getMessages = async (req,res) => {
-    const id = req.body.id
+    const id = req.body.token.id
     if(id == ''){
         err = 'fields cannot be empty'
         res.json({

@@ -1,6 +1,6 @@
 const db = require('./service.firestore');
 const FCM = require('fcm-node');
-const serverKey = 'AAAAuJRM-o0:APA91bGKORX2zFjwtOz6gY948-4EuzZJgSIUSpmP2LebX7HYWmKycXuF1iteQlZCEzddDHp5Gy4A8yMz0FGB-W0c6GdfLkjFF3bXzA83JqMdOQEn9JFpYkupje-RkdehxoABqOO3e9XY'; // put your server key here
+const serverKey = 'AAAAGFnqyss:APA91bFtXq2frTulgirhNwPHWg3k8t_5KESo-dLOZbtJBaE1vl23ZvmoPrcudKrt_cpMQViycdGYNljgIOLugHykMLxJGwsBgq-b3zToBnEdCuLwzmSC5K1bqOZQIF6dYF1IBoMNGkd5'; // put your server key here
 const fcm = new FCM(serverKey);
 const getCurrentProvince = require('./service.province-classifier');
 
