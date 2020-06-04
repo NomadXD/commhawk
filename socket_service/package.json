@@ -23,6 +23,7 @@
     "multer-s3": "^2.9.0",
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.0",
+    "pg": "^8.2.1",
     "rethinkdb": "^2.4.2",
     "socket.io": "^2.3.0",
     "swagger-jsdoc": "^4.0.0",

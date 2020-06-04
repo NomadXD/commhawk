@@ -37,6 +37,11 @@ apiEndpoints:
       - '/api/gov/update/location'
       - '/api/gov/update/info'
       - '/api/gov/update/change-password'
+      - '/api/gov/analytics/token'
+      - '/api/gov/analytics/date'
+      - '/api/gov/analytics/province'
+      - '/api/gov/analytics/day'
+      - '/api/gov/analytics'
     methods: ["GET","POST","PUT","DELETE","OPTIONS"]
   socket:
     host: '*'
