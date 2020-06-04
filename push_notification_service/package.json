@@ -13,14 +13,15 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "h3-js": "^3.6.3",
-    "nodemon": "^2.0.4",
     "fcm-node": "^1.5.2",
-    "firebase": "^7.13.2"
+    "firebase": "^7.13.2",
+    "firebase-admin": "^8.12.1",
+    "h3-js": "^3.6.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "nodemon": "^2.0.3",
     "mocha": "^7.1.2"
   }
 }

@@ -96,20 +96,26 @@ const saveLocation = async (req,res) => {
     const FCM_token = req.body.FCM_token
     if(FCM_token == '' || prev_location == '' ||FCM_token == ''){
         err = 'fields cannot be empty'
-        res.json({
+        res.status(400).send({
+            "status":400,
+            "message":"Bad request",
             'error': err
         })
     }
     else{
         try{
             const result = await alert.saveLocation(prev_location, curr_location, FCM_token)
-            res.json({
+            res.status(201).send({
+                "status":201,
+                "message":"location saved",
                 'users': result,
             })
             //console.log(res)  
         }catch(err){
             console.log('error',err);
-            res.json({
+            res.status(500).send({
+                "status":500,
+                "message":"Internal server error",
                 'error': err
             })
         }
