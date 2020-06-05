@@ -133,7 +133,7 @@ const deleteUserController = async (req,res) => {
         }
     
    }else{
-       res.status(500).send({
+       res.status(401).send({
            "status":401,
            "message":"Unauthorized"
        });
@@ -200,7 +200,7 @@ const changePasswordController = async (req,res) => {
             }else{
                 res.status(500).send({
                     "status":500,
-                    "message":"Password change failed"
+                    "message":"Internal server error"
                 });
             }
         }else{
@@ -211,9 +211,9 @@ const changePasswordController = async (req,res) => {
         }    
 
     }else{
-        res.status(401).send({
-            "status":401,
-            "message":"Unauthorized"
+        res.status(400).send({
+            "status":400,
+            "message":"Bad request"
         });
     }
 
