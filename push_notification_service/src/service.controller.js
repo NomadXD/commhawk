@@ -56,7 +56,7 @@ const saveAndSendAll = async (req,res) => {
         try{
             const result = await alert.sendAlertAll(title,body,level,center,radius)
             const msg_id = await alert.saveAlert(id,'',title,body,level,center,radius)
-            res.send(200).send({
+            res.status(200).send({
                 "status":200,
                 "message":"Successfully sent",
                 'users': result,
@@ -77,13 +77,17 @@ const getMessages = async (req,res) => {
     const id = req.body.token.id
     if(id == ''){
         err = 'fields cannot be empty'
-        res.json({
+        res.status(400).send({
+            "status":400,
+            "message":"Bad request",
             'error': err
         })
     }
     else{
         const result = await alert.getMessages(id)
-        res.json({
+        res.status(200).send({
+            "status":200,
+            "message":"Success",
             'message_list':result
         })
     }
@@ -107,8 +111,7 @@ const saveLocation = async (req,res) => {
             const result = await alert.saveLocation(prev_location, curr_location, FCM_token)
             res.status(201).send({
                 "status":201,
-                "message":"location saved",
-                'users': result,
+                "message":"location saved"
             })
             //console.log(res)  
         }catch(err){
