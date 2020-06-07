@@ -59,8 +59,8 @@ CALL createGovInstitute('b17db592-6c65-4ec7-b5bc-e1b2483eeacf',6,'Social service
 
 --UNCOMMENT AFTER ADMIN CREATION
 
-/* UPDATE government_institute SET institute_status = 2 where institute_id = 'b13b39b0-ef43-4df8-932f-6a1a79e1109d';
+UPDATE government_institute SET institute_status = 2 where institute_id = 'b13b39b0-ef43-4df8-932f-6a1a79e1109d';
 UPDATE government_institute SET institute_status = 2 where institute_id = 'ade39ee6-ed99-4002-a655-35308d460f97';
 UPDATE government_institute SET institute_status = 2 where institute_id = '2db8c542-18c8-465a-8d74-46e8338f4e43';
 UPDATE government_institute SET institute_status = 2 where institute_id = 'f274bdd4-8213-4b23-8fcb-994af0cd094d';
-UPDATE government_institute SET institute_status = 2 where institute_id = 'b17db592-6c65-4ec7-b5bc-e1b2483eeacf'; */
+UPDATE government_institute SET institute_status = 2 where institute_id = 'b17db592-6c65-4ec7-b5bc-e1b2483eeacf';
