@@ -78,7 +78,12 @@ const messengeSenderController = async (req,res) => {
 
             //
             const modelResponse = await fetch("https://lochana.pythonanywhere.com/predictTokens", {method: "POST", body: JSON.stringify({"message":report.description}) ,headers:headers}).then(res => res.json());
-            reportModel.saveReportData(report, modelResponse.tokens);
+            
+            if(modelResponse.tokens.length != 0){
+                reportModel.saveReportData(report, modelResponse.tokens);
+            }else{
+                reportModel.saveReportData(report, ["Unknown"]);
+            }
             //
     
         }else{
