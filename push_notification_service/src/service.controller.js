@@ -18,8 +18,14 @@ const saveAndSendAlert = async (req,res) => {
         try{
             const result = await alert.sendAlert(province_list,title,body,level)
             const msg_id = await alert.saveAlert(id,province_list,title,body,level,'','')
-            res.status(200).send({
-                "status":200,
+            if (result.length == 0){
+                res.status(200).send({
+                    "status":200,
+                    "message":"No users",
+                })
+            }
+            res.status(201).send({
+                "status":201,
                 "message":"Successfully sent",
                 'users': result,
                 'msg_id': msg_id
@@ -56,12 +62,21 @@ const saveAndSendAll = async (req,res) => {
         try{
             const result = await alert.sendAlertAll(title,body,level,center,radius)
             const msg_id = await alert.saveAlert(id,'',title,body,level,center,radius)
-            res.status(200).send({
-                "status":200,
-                "message":"Successfully sent",
-                'users': result,
-                'msg_id': msg_id
-            })
+            if (result.length == 0){
+                res.status(200).send({
+                    "status":200,
+                    "message":"No users",
+                })
+            }
+            else{
+                res.status(201).send({
+                    "status":201,
+                    "message":"Successfully sent",
+                    'users': result,
+                    'msg_id': msg_id
+                })
+            }
+            
         }catch(err){
             console.log('error',err);
             res.status(500).send({
@@ -84,12 +99,31 @@ const getMessages = async (req,res) => {
         })
     }
     else{
-        const result = await alert.getMessages(id)
-        res.status(200).send({
-            "status":200,
-            "message":"Success",
-            'message_list':result
-        })
+        try{
+            const result = await alert.getMessages(id)
+            console.log(result.length)
+            if (result.length == 0){
+                res.status(200).send({
+                    "status":200,
+                    "message":"no messages",
+                });
+            }
+            else{
+                res.status(201).send({
+                    "status":201,
+                    "message":"Success",
+                    'message_list':result
+                });
+            }
+            
+        }
+        catch(err){
+            res.status(500).send({
+                "status": 500,
+                "message": "Internal server error",
+                'error': err
+            })
+        }
     }
     
 }
