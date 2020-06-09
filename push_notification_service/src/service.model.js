@@ -11,8 +11,6 @@ const sendAlertAll = async(title,body,level,center,radius) =>{
     .then(snapshot => {
         if (snapshot.empty) {
             console.log('No matching documents.');
-            s = 'No matching docs'
-            return s
         } 
         snapshot.forEach(doc => {
             user_token = doc.id
@@ -92,9 +90,7 @@ const getMessages = async(id) =>{
     const message_list = await db.collection('messages').get()
     .then(snapshot => {
         if (snapshot.empty) {
-            var s = "No matching documents."
             console.log('No matching documents.');
-            return s
         } 
         snapshot.forEach(doc => {
             if(doc.data().id == id){
@@ -135,9 +131,7 @@ const saveLocation = async(prev_location, curr_location, FCM_token) => {
                     .then(doc => {
                         if (doc.data() == undefined) {
                             console.log('No matching documents.');
-                            s = 'No matching docs'
-                            //console.log(s)
-                            return s
+                            return null
                         } 
                         else{
                             user_tokens = doc.data().available_users
