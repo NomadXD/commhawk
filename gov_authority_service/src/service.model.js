@@ -364,7 +364,7 @@ const analyzeTokens = async (accountType, startDate, endDate) => {
                         r.report_id = rc.report_id and
                         rc.report_id = rt.report_id and
                         rc.category = $1 and
-                        r.date BETWEEN $2 AND $3
+                        cast(r.date as date) BETWEEN $2 AND $3
                         group by rt.token`;
     const values = [category, startDate, endDate];
     const result = await pool.query(queryString, values);
@@ -385,7 +385,7 @@ const analyzeDate = async (accountType, startDate, endDate) => {
     const queryString = `select r.date::timestamp::date,count(r.date)::INT from report_category rc, report r where  
                         r.report_id = rc.report_id and
                         rc.category = $1 and
-                        r.date BETWEEN $2 AND $3
+                        cast(r.date as date) BETWEEN $2 AND $3
                         group by r.date::timestamp::date`;
     const values = [category, startDate, endDate];
     const result = await pool.query(queryString, values);
@@ -406,7 +406,7 @@ const analyzeProvince = async (accountType, startDate, endDate) => {
     const queryString = `select r.province,count(r.province)::INT from report_category rc, report r where  
                         r.report_id = rc.report_id and
                         rc.category = $1 and
-                        r.date BETWEEN $2 AND $3
+                        cast(r.date as date) BETWEEN $2 AND $3
                         group by r.province;`;
     const values = [category, startDate, endDate];
     const result = await pool.query(queryString, values);
