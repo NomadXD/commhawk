@@ -1,3 +1,4 @@
+//require("appmetrics-dash").attach();
 const express = require("express");
 const app = express();
 const userRouter = require("./service.routes");
