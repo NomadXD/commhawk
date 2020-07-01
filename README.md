@@ -7,10 +7,10 @@
     <img src="assets/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">YOUR_TITLE</h3>
+  <h3 align="center">Commhawk</h3>
 
   <p align="center">
-    YOUR_SHORT_DESCRIPTION
+   🛰 Real time emergency alerting and incident reporting system 🛰️
     <br />
     <a href="#"><strong>Explore the docs »</strong></a>
     <br />
@@ -33,7 +33,6 @@
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
-* [Usage](#usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
@@ -44,21 +43,21 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
+**Commhawk is an emergency alerting and incident reporting system which is ideal for government institutes/organisations that are in the domain of disaster management.**
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Here's a blank template to get started:
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`github_username`, `repo`, `twitter_handle`, `email`
-
+The repository contain the backend code for the project Commhawk. The project comprises of 2 modules which are independently implemented for emergency alerting and incident reporting. The project is designed and implemented according to the microservices architecture. 
 
 ### Built With
 
-* []()
-* []()
-* []()
-
-
+* [NodeJS](https://nodejs.org/en/)
+* [Docker](https://www.docker.com/)
+* [RethinkDB](https://rethinkdb.com/)
+* [Postgresql](https://www.postgresql.org/)
+* [Python](https://www.python.org/)
+* [Firebase](https://firebase.google.com/)
+* [AWS](https://aws.amazon.com/)
+* [Socket.io](https://socket.io/)
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -67,34 +66,44 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+This is an example of how to list things you need to use the software and how to install them on a debian linux environment.
+* docker
+* docker-compose
+
+Installing Docker on Ubuntu 18.04 LTS
 ```sh
-npm install npm@latest -g
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+sudo apt update
+apt-cache policy docker-ce
+sudo apt install docker-ce
+sudo systemctl status docker
+```
+Installing Docker-compose on Ubuntu 18.04 LTS
+
+```ssh
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
 ```
 
 ### Installation
  
-1. Clone the repo
+1. Clone the repo 
 ```sh
-git clone https://github.com/github_username/repo.git
+git clone https://github.com/NomadXD/commhawk.git
+cd commhawk
 ```
-2. Install NPM packages
+2. Build the project with docker-compose
 ```sh
-npm install
+docker-compose build
 ```
-
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-
-
+3. Start the services with docker-compose
+```sh
+docker-compose up
+```
 <!-- ROADMAP -->
 ## Roadmap
 
@@ -125,18 +134,21 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email
-
-Project Link: [https://github.com/github_username/repo](https://github.com/github_username/repo)
-
-
-
+Lahiru Udayanga - lahiru97udayanga@gmail.com
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 
-* []()
-* []()
-* []()
+* Dr. Dulani Meedeniya
+Senior Lecturer,
+Department of Computer Science and Engineering,
+University of Moratuwa,
+Sri Lanka
+* Mr. Sachin Kahawala,
+Mentor,
+Department of Computer Science and Engineering,
+University of Moratuwa,
+Sri Lanka
+
 
 
 
