@@ -33,8 +33,8 @@ services:
       - postgres
     environment:
       DATABASE_URL: postgres://commhawk:password@postgres:5432/user_data
-    volumes: 
-      - ./user_data_service:/src
+    # volumes: 
+    #   - ./user_data_service:/src
       # - container_node_modules:/src/node_modules
   
   gov_authority_service:
@@ -46,8 +46,8 @@ services:
       - postgres
     environment:
       DATABASE_URL: postgres://commhawk:password@postgres:5432/gov_auth
-    volumes:
-      - ./gov_authority_service:/src
+    # volumes:
+    #   - ./gov_authority_service:/src
       
   push_notification_service:
     build: './push_notification_service'
@@ -57,8 +57,8 @@ services:
     depends_on: 
       - user_data_service
       - gov_authority_service
-    volumes: 
-      - ./push_notification_service:/src  
+    # volumes: 
+    #   - ./push_notification_service:/src  
 
   socket_service:
     build: './socket_service'
@@ -71,8 +71,8 @@ services:
       DATABASE_URL: postgres://commhawk:password@postgres:5432/gov_auth
       SECRET_ACCESS_KEY: J3Br9pw5+vbfTV8QktJyscbUJalsLtnJlNMQD8w2
       ACCESS_KEY: AKIAIRQ44XE5MGYPSE4A
-    volumes: 
-      - ./socket_service:/src
+    # volumes: 
+    #   - ./socket_service:/src
 
 
   api_gateway:
