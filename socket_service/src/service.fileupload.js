@@ -6,8 +6,7 @@ const multerS3 = require("multer-s3");
 aws.config.update({
   secretAccessKey: process.env.SECRET_ACCESS_KEY,
   accessKeyId: process.env.ACCESS_KEY,
-  region: "us-east-1",
-  sessionToken: process.env.SESSION_TOKEN
+  region: "ap-south-1",
 });
 
 const s3 = new aws.S3();
@@ -25,7 +24,7 @@ const upload = multer({
   storage: multerS3({
     acl: "public-read",
     s3,
-    bucket: "commhawk",
+    bucket: "commhawkdemo",
     metadata: function (req, file, cb) {
       cb(null, {fieldName: "TESTING_METADATA"});
     },

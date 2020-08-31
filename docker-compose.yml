@@ -69,9 +69,8 @@ services:
       - rethinkdb
     environment: 
       DATABASE_URL: postgres://commhawk:password@postgres:5432/gov_auth
-      SECRET_ACCESS_KEY: JqFuuSqodm4OOMu9Tl9pQ9UP2y6/RPMQkyCnWGhn
-      ACCESS_KEY: ASIATPIHHDYUA7ZT7E53
-      SESSION_TOKEN: FwoGZXIvYXdzEKj//////////wEaDBrxkn3tlVxMXTb8KiLNAUxPIPxtY6jG0eciz2KQSip69EjXUGKPepeMHEOum2RkHQy3LYb0AyILXrA9HxnCWGSNBUy8VFC2D/HZZ8lOM+zHR7Y6hJ47ULTUQRlAXWg1qg/z/xn52PK0QTCrx0M0miNMudQ4Wbiit1LOSrXmDpHJ7JqmanNUlSc+hes64h6Hhiu3gR/2L0X04k8mlQPXr+D9kpUQJQ19fIaysFybcIcfUqBbs3k6QwFf9a2suRGGNEzYhdjgbAIgAgwahPzaTpmDKlr+od5CMgBoApso3OD89gUyLWjVilUKZEQpzYxywwTAa/cHfPe/ce0p1xuLQQBfy3jkSMMLcwnsm1Y3L80yPQ==
+      SECRET_ACCESS_KEY: J3Br9pw5+vbfTV8QktJyscbUJalsLtnJlNMQD8w2
+      ACCESS_KEY: AKIAIRQ44XE5MGYPSE4A
     volumes: 
       - ./socket_service:/src
 
